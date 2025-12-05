@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option java_package = "it.uni.progettoids.protocol";
+option java_multiple_files = true; //ci permette di creare per ogni message un file .java separato
+
+service PlatformManagement{
+
+  rpc SearchFilms(SearchFilmRequest) returns (FilmListResponse);
+
+  rpc Create(FilmDTO) returns (OperationResponse);
+  rpc Update(FilmDTO) returns (OperationResponse);
+
+  rpc Delete(FilmIdRequest) returns (OperationResponse);
+}
+
+message FilmDTO{
+  uint32 id = 1;
+  string title = 2;
+  string director = 3;
+  string genre = 4;
+  uint32 year_of_release = 5;
+  uint32 rating = 6;
+  string viewing_status = 7;
+}
+
+message SearchFilmRequest{
+  //Se sono vuoti i campi si ignorano
+  string title = 1;
+  string director = 2;
+  string genre = 3;
+  uint32 year_of_release = 4;
+
+  //DA CAPIRE se ordinare lato server o lato client
+}
+
+  enum SortBy{
+    NONE = 0;
+    TITTLE = 1;
+    YEAR = 2;
+    RATING = 3;
+  }
+
+  enum ViewingStatus {
+    UNKNOWN_STATUS = 0;
+    TO_WATCH = 1;
+    WATCHING = 2;
+    WATCHED = 3;
+  }
+
+message FilmListResponse{
+  repeated FilmDTO filmList = 1;
+}
+
+message OperationResponse{
+  bool valid = 1; //true operazione riuscita
+  string message = 2; //messaggio di errore o conferma
+}
+
+message FilmIdRequest{
+  uint32 id = 1;
+}
