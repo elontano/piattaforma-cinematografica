@@ -1,7 +1,7 @@
 package it.unical.dimes.entity;
 
 public class Film {
-    private final Long id;
+    private final Integer id;
     private final String title;
     private final String director ;
     private final String genre;
@@ -14,7 +14,7 @@ public class Film {
         private final String title;
 
         //optional
-        private Long id = null;
+        private Integer id = null;
         private String director = "";
         private String genre = "";
         private Integer yearOfRelease = 0;
@@ -25,7 +25,7 @@ public class Film {
             this.title=title;
         }
 
-        public Builder id(Long id){
+        public Builder id(Integer id){
             this.id=id;
             return this;
         }
@@ -70,9 +70,40 @@ public class Film {
         viewingStatus=builder.viewingStatus;
     }
 
+    public String getDirector() {
+        return director;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public ViewingStatus getViewingStatus() {
+        return viewingStatus;
+    }
+
+    public Integer getYearOfRelease() {
+        return yearOfRelease;
+    }
+
     @Override
     public String toString() {
         return "Film {id= "+id+" title= '"+title+"'";
         //da completare
     }
+
+
+
 }

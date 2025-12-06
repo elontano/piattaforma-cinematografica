@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "it.uni.progettoids.protocol";
+option java_package = "it.unical.dimes.protocol";
 option java_multiple_files = true; //ci permette di creare per ogni message un file .java separato
 
 service PlatformManagement{
@@ -17,7 +17,7 @@ message FilmDTO{
   string genre = 4;
   uint32 year_of_release = 5;
   uint32 rating = 6;
-  ViewingStatus viewing_status = 7;
+  ViewingStatusDTO viewing_status = 7;
 }
 
 message SearchFilmRequest{
@@ -26,20 +26,20 @@ message SearchFilmRequest{
   optional string director = 2;
   optional string genre = 3;
   optional uint32 year_of_release = 4;
-  optional ViewingStatus viewing_status = 5;
+  optional ViewingStatusDTO viewing_status = 5;
 
-  SortBy sort_by = 6;
+  SortByDTO sort_by = 6;
   bool sort_ascending = 7; //true asc, false disc
 }
 
-  enum SortBy{
+  enum SortByDTO{
     NONE = 0; //valore di default
     TITLE = 1;
     YEAR = 2;
     RATING = 3;
   }
 
-  enum ViewingStatus {
+  enum ViewingStatusDTO {
     UNKNOWN_STATUS = 0;//per eventuali errori, lo stato di visione deve essere sempre specificato
     TO_WATCH = 1; //potrebbe essere lo stato di visione di default
     WATCHING = 2;
