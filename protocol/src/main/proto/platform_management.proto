@@ -4,12 +4,9 @@ option java_package = "it.uni.progettoids.protocol";
 option java_multiple_files = true; //ci permette di creare per ogni message un file .java separato
 
 service PlatformManagement{
-
   rpc SearchFilms(SearchFilmRequest) returns (FilmListResponse);
-
   rpc Create(FilmDTO) returns (OperationResponse);
   rpc Update(FilmDTO) returns (OperationResponse);
-
   rpc Delete(FilmIdRequest) returns (OperationResponse);
 }
 
@@ -20,29 +17,31 @@ message FilmDTO{
   string genre = 4;
   uint32 year_of_release = 5;
   uint32 rating = 6;
-  string viewing_status = 7;
+  ViewingStatus viewing_status = 7;
 }
 
 message SearchFilmRequest{
   //Se sono vuoti i campi si ignorano
-  string title = 1;
-  string director = 2;
-  string genre = 3;
-  uint32 year_of_release = 4;
+  optional string title = 1;
+  optional string director = 2;
+  optional string genre = 3;
+  optional uint32 year_of_release = 4;
+  optional ViewingStatus viewing_status = 5;
 
-  //DA CAPIRE se ordinare lato server o lato client
+  SortBy sort_by = 6;
+  bool sort_ascending = 7; //true asc, false disc
 }
 
   enum SortBy{
-    NONE = 0;
-    TITTLE = 1;
+    NONE = 0; //valore di default
+    TITLE = 1;
     YEAR = 2;
     RATING = 3;
   }
 
   enum ViewingStatus {
-    UNKNOWN_STATUS = 0;
-    TO_WATCH = 1;
+    UNKNOWN_STATUS = 0;//per eventuali errori, lo stato di visione deve essere sempre specificato
+    TO_WATCH = 1; //potrebbe essere lo stato di visione di default
     WATCHING = 2;
     WATCHED = 3;
   }
