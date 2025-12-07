@@ -13,8 +13,11 @@ public class ViewingStatusMapper {
             case TO_WATCH -> {
                 return ViewingStatus.TO_WATCH;
             }
-            default -> {
+            case WATCHED -> {
                 return ViewingStatus.WATCHED;
+            }
+            default -> {
+                return ViewingStatus.UNKNOWN_STATUS;
             }
         }
     }
@@ -35,4 +38,5 @@ public class ViewingStatusMapper {
             }
         }
     }
+
 }
