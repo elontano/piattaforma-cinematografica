@@ -17,7 +17,7 @@ public class FilmMapper {
     }
 
     public static FilmDTO toGrpc (Film film){
-        return new FilmDTO.Builder()
+        return FilmDTO.newBuilder()
                 .setId(film.getId())
                 .setTitle(film.getTitle())
                 .setDirector(film.getDirector())
@@ -27,6 +27,4 @@ public class FilmMapper {
                 .setViewingStatus(ViewingStatusMapper.toGrpc(film.getViewingStatus()))
                 .build();
     }
-
-
 }
