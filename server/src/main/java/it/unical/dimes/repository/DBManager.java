@@ -42,12 +42,12 @@ public class DBManager {
         String creaTabella = """
             CREATE TABLE IF NOT EXISTS Film (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                titolo VARCHAR(255) NOT NULL,
-                regista VARCHAR(255) NOT NULL,
-                anno_uscita INT,
-                genere VARCHAR(100),
-                valutazione INT,
-                stato_visione VARCHAR(50)
+                title VARCHAR(255) NOT NULL,
+                director VARCHAR(255) NOT NULL,
+                year_of_release INT,
+                genre VARCHAR(100),
+                rating INT,
+                viewing_status VARCHAR(50)
             );
         """;
 
