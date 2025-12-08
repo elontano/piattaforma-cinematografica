@@ -1,6 +1,5 @@
 package it.unical.dimes.repository;
 
-import it.unical.dimes.entity.Film;
 import it.unical.dimes.entity.FilmFilter;
 import it.unical.dimes.entity.SortBy;
 import it.unical.dimes.entity.ViewingStatus;

@@ -43,7 +43,7 @@ public class DBManager {
             CREATE TABLE IF NOT EXISTS Film (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
-                director VARCHAR(255) NOT NULL,
+                director VARCHAR(255),
                 year_of_release INT,
                 genre VARCHAR(100),
                 rating INT,
@@ -52,11 +52,11 @@ public class DBManager {
         """;
 
         try (Connection connection = getConnection();
-             Statement statement = connection.createStatement()){
+             Statement statement = connection.createStatement()) {
             statement.execute(creaTabella);
             System.out.println("Tabella 'Film' creata/verificata con successo.");
-        }catch (SQLException e){
-            System.err.println("Errore durante initDB "+e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("initDB error " + e.getMessage());
         }
     }
 }
