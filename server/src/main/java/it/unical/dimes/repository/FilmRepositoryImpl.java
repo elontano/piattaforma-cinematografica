@@ -2,11 +2,21 @@ package it.unical.dimes.repository;
 
 import it.unical.dimes.entity.Film;
 import it.unical.dimes.entity.FilmFilter;
+import it.unical.dimes.entity.ViewingStatus;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
-public class FilmRepositoryImpl implements FilmRepository{
+public class FilmRepositoryImpl implements FilmRepository {
+    //column names
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String DIRECTOR = "director";
+    private static final String YEAR = "year_of_release";
+    private static final String GENRE = "genre";
+    private static final String RATING = "rating";
+    private static final String STATUS = "viewing_status";
 
     private final DBManager dbManager;
 
@@ -14,74 +24,142 @@ public class FilmRepositoryImpl implements FilmRepository{
         this.dbManager = dbManager;
     }
 
-    @Override
     public Film save(Film film) {
-        String query = "INSERT INTO Film(title,director,year_of_release,genre,rating,viewing_status) " +
-                "VALUES (?, ?, ?, ?, ?, ?) ";
-
+        //Film: ID,TITLE,DIRECTOR,YEAR,GENRE,RATIN,VS;
+        String query = Queries.INSERT;
         int id = -1;
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, film.getTitle());
-
-            if (film.getDirector()==null || film.getDirector().isEmpty()) ps.setNull(2, Types.VARCHAR);
-            else ps.setString(2, film.getDirector());
-
-            if (film.getYearOfRelease()==null || film.getYearOfRelease() <= 1895) ps.setNull(3, Types.INTEGER);
-            else ps.setInt(3, film.getYearOfRelease());
-
-            if (film.getGenre()==null || film.getGenre().isEmpty()) ps.setNull(4, Types.VARCHAR);
-            else ps.setString(4, film.getGenre());
-
-            if (film.getRating()==null || film.getRating() == 0) ps.setNull(5, Types.INTEGER);
-            else ps.setInt(5, film.getRating());
-
+            setStringOrNull(ps, 2, film.getDirector());
+            setIntOrNull(ps, 3, film.getYearOfRelease());
+            setStringOrNull(ps, 4, film.getGenre());
+            setIntOrNull(ps, 5, film.getRating());
             ps.setString(6, film.getViewingStatus().name());
 
             int affRows = ps.executeUpdate();
 
             if (affRows == 0) {
-                throw new SQLException("Inserimento fallito, nessuna riga modificata.");
+                throw new SQLException("Insert failed, no rows changed..");
             }
 
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     id = generatedKeys.getInt(1);
                 } else {
-                    throw new SQLException("Inserimento fallito, nessun ID ottenuto.");
+                    throw new SQLException("Insert failed, no ID received..");
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-            //throw new RuntimeException("Errore DB durante il salvataggio", e);
+            System.err.println("DB error during save..");
+            throw new RuntimeException("DB error during save..", e);
         }
 
-        if(id!=-1){
-            return new Film.Builder(film.getTitle())
-                    .id(id)
-                    .director(film.getDirector())
-                    .yearOfRelease(film.getYearOfRelease())
-                    .genre(film.getGenre())
-                    .rating(film.getRating())
-                    .viewingStatus(film.getViewingStatus())
-                    .build();
-        }
-        return null;
+
+        return new Film.Builder(film.getTitle())
+                .id(id)
+                .director(film.getDirector())
+                .yearOfRelease(film.getYearOfRelease())
+                .genre(film.getGenre())
+                .rating(film.getRating())
+                .viewingStatus(film.getViewingStatus())
+                .build();
     }
 
     @Override
     public List<Film> search(FilmFilter filter) {
-        return List.of();
+
+        //verrà popolato da buildSearchQuery
+        List<Object> params = new ArrayList<>();
+        String query = Queries.buildSearchQuery(filter,params);
+
+        List<Film> listFilm = new ArrayList<>();
+
+        try(Connection connection = dbManager.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query)){
+
+            for(int i=0;i<params.size();i++){
+                statement.setObject(i+1,params.get(i));
+            }
+
+            try (ResultSet rs = statement.executeQuery()){
+                while (rs.next()){
+                    listFilm.add(extractFilm(rs));
+                }
+            }
+        }catch (SQLException e){
+            System.err.println("DB connection failed"+e.getMessage());
+            throw new RuntimeException("Errore durante la ricerca nel DB", e);
+        }
+        return listFilm;
     }
 
     @Override
-    public void update(Film film) {
+    public boolean update(Film film) {
+        //Film: ID,TITLE,DIRECTOR,YEAR,GENRE,RATING,VS;
+        String query = Queries.UPDATE;
+        int rowsAffected = 0;
+        try (Connection connection = dbManager.getConnection();
+            PreparedStatement ps = connection.prepareStatement(query)){
 
+            ps.setString(1, film.getTitle());
+            setStringOrNull(ps,2,film.getDirector());
+            setIntOrNull(ps,3, film.getYearOfRelease());
+            setStringOrNull(ps,4,film.getGenre());
+            setIntOrNull(ps,5, film.getRating());
+            ps.setString(6,film.getViewingStatus().name());
+
+            //WHERE id = ?
+            ps.setInt(7,film.getId());
+
+            rowsAffected = ps.executeUpdate();
+        }catch (SQLException e ){
+            System.err.println("DB connection failed"+e.getMessage());
+        }
+        return rowsAffected>0;
     }
 
     @Override
-    public void delete(Long ID) {
+    public boolean delete(Integer ID) {
+        String query = Queries.DELETE;
+        int rowsAffected = 0;
+        try(Connection connection = dbManager.getConnection();
+            PreparedStatement ps = connection.prepareStatement(query)){
 
+            ps.setInt(1,ID);
+            rowsAffected = ps.executeUpdate();
+        }catch (SQLException e){
+            System.err.println("DB connection failed"+e.getMessage());
+        }
+        return rowsAffected>0;
+    }
+
+    private Film extractFilm(ResultSet rs) throws SQLException {
+        Film film = null;
+        film = new Film.Builder(rs.getString(TITLE))
+                .id(rs.getInt(ID))
+                .director(rs.getString(DIRECTOR))
+                .genre(rs.getString(GENRE))
+                .yearOfRelease(rs.getInt(YEAR))
+                .rating(rs.getInt(RATING))
+                .viewingStatus(ViewingStatus.valueOf(rs.getString(STATUS)))
+                .build();
+
+        return film;
+    }
+
+    private void setStringOrNull(PreparedStatement ps, int index, String value) throws SQLException {
+
+        if (value == null || value.isEmpty())
+            ps.setNull(index, Types.VARCHAR);
+        else ps.setString(index, value);
+    }
+
+    private void setIntOrNull(PreparedStatement ps, int index, Integer value) throws SQLException {
+
+        if (value == null)
+            ps.setNull(index, Types.INTEGER);
+        else ps.setInt(index, value);
     }
 }
