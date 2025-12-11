@@ -3,7 +3,7 @@ syntax = "proto3";
 option java_package = "it.unical.dimes.protocol";
 option java_multiple_files = true; //ci permette di creare per ogni message un file .java separato
 
-service PlatformManagement{
+service CatalogService{
   rpc SearchFilms(SearchFilmRequest) returns (FilmListResponse);
   rpc Create(FilmDTO) returns (OperationResponse);
   rpc Update(FilmDTO) returns (OperationResponse);
@@ -54,6 +54,7 @@ message OperationResponse{
   bool valid = 1; //true operazione riuscita
   string message = 2; //messaggio di errore o conferma
 }
+
 
 message FilmIdRequest{
   uint32 id = 1;
