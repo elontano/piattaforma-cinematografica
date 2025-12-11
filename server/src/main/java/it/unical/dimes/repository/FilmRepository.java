@@ -7,16 +7,13 @@ import java.util.List;
 
 public interface FilmRepository {
 
-    /*
-    ritorna il film salvato con l'ID
-     */
     Film save(Film film);
 
     List<Film> search(FilmFilter filter);
 
-    //potrebbe ritornare il film aggiornato
     boolean update(Film ID);
 
-    //potrebbe ritornare il film eliminato
     boolean delete(Integer ID);
+
+    boolean exists(Integer ID);
 }

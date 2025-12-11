@@ -25,7 +25,9 @@ public class Queries {
             + String.format("%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ? WHERE %s = ?",TITLE,DIRECTOR,YEAR,GENRE,RATING,STATUS,ID);
 
     
-    public static final String DELETE = "DELETE FROM "+TABLE+" WHERE ?";
+    public static final String DELETE = "DELETE FROM "+TABLE+" WHERE "+ID+" = ?";
+
+    public static final String EXISTS = "SELECT COUNT(*) FROM "+TABLE+" WHERE "+ID+" = ?";
 
     public static String buildSearchQuery(FilmFilter filter, List<Object> params){
         StringBuilder query = new StringBuilder("SELECT * FROM "+TABLE+" WHERE 1=1");
@@ -45,13 +47,13 @@ public class Queries {
             params.add("%"+filter.getGenre()+"%");
         }
 
-        if (!(filter.getYearOfRelease()==null)){
+        if (!(filter.getYearOfRelease()==null || filter.getYearOfRelease()==0)){
             query.append(" AND "+YEAR+" LIKE ?");
             params.add("%"+filter.getYearOfRelease()+"%");
         }
 
         if(!(filter.getViewingStatus() == ViewingStatus.UNKNOWN_STATUS)){
-            query.append("AND "+STATUS+" = ?");
+            query.append(" AND "+STATUS+" = ?");
             params.add(filter.getViewingStatus().name());
         }
 

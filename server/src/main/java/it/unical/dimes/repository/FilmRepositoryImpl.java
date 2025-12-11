@@ -77,13 +77,13 @@ public class FilmRepositoryImpl implements FilmRepository {
         List<Film> listFilm = new ArrayList<>();
 
         try(Connection connection = dbManager.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)){
+            PreparedStatement ps = connection.prepareStatement(query)){
 
             for(int i=0;i<params.size();i++){
-                statement.setObject(i+1,params.get(i));
+                ps.setObject(i+1,params.get(i));
             }
 
-            try (ResultSet rs = statement.executeQuery()){
+            try (ResultSet rs = ps.executeQuery()){
                 while (rs.next()){
                     listFilm.add(extractFilm(rs));
                 }
@@ -130,14 +130,32 @@ public class FilmRepositoryImpl implements FilmRepository {
             ps.setInt(1,ID);
             rowsAffected = ps.executeUpdate();
         }catch (SQLException e){
-            System.err.println("DB connection failed"+e.getMessage());
+            System.err.println("DB connection failed "+e.getMessage());
         }
         return rowsAffected>0;
     }
 
+    @Override
+    public boolean exists(Integer ID) {
+        String query = Queries.EXISTS;
+        try(Connection connection = dbManager.getConnection();
+            PreparedStatement ps = connection.prepareStatement(query)){
+
+            ps.setInt(1,ID);
+
+            try (ResultSet rs = ps.executeQuery()){
+                if(rs.next()){
+                    return rs.getInt(1)>0;
+                }
+            }
+        }catch (SQLException e){
+            System.err.println("DB connection failed " + e.getMessage() );
+        }
+        return false;
+    }
+
     private Film extractFilm(ResultSet rs) throws SQLException {
-        Film film = null;
-        film = new Film.Builder(rs.getString(TITLE))
+        return new Film.Builder(rs.getString(TITLE))
                 .id(rs.getInt(ID))
                 .director(rs.getString(DIRECTOR))
                 .genre(rs.getString(GENRE))
@@ -145,8 +163,6 @@ public class FilmRepositoryImpl implements FilmRepository {
                 .rating(rs.getInt(RATING))
                 .viewingStatus(ViewingStatus.valueOf(rs.getString(STATUS)))
                 .build();
-
-        return film;
     }
 
     private void setStringOrNull(PreparedStatement ps, int index, String value) throws SQLException {

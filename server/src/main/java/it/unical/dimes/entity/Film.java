@@ -100,7 +100,13 @@ public class Film {
 
     @Override
     public String toString() {
-        return "Film {id= "+id+" title= '"+title+"'";
+        return "{id= "+id
+                +" title= '"
+                +title+"'"
+                +" director= '"
+                +director+"'"
+                +" year= '"
+                +yearOfRelease+"'";
         //da completare
     }
 
