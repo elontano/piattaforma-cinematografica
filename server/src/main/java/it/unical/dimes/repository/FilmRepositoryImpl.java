@@ -115,7 +115,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
             rowsAffected = ps.executeUpdate();
         }catch (SQLException e ){
-            System.err.println("DB connection failed"+e.getMessage());
+            throw new RuntimeException("DB error during update");
         }
         return rowsAffected>0;
     }
@@ -130,7 +130,7 @@ public class FilmRepositoryImpl implements FilmRepository {
             ps.setInt(1,ID);
             rowsAffected = ps.executeUpdate();
         }catch (SQLException e){
-            System.err.println("DB connection failed "+e.getMessage());
+            throw new RuntimeException("DB error during delete");
         }
         return rowsAffected>0;
     }

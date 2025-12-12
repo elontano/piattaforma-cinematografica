@@ -17,18 +17,7 @@ public class FilmService {
     }
 
     public void save(Film film){
-        if(film==null || film.getTitle().isEmpty())
-            throw new ValidationException("The title of the film must be specified.");
-        if(film.getRating()<1 || film.getRating()>5)
-            throw new ValidationException("The rating must be between 1 and 5.");
-        /*
-            Range Film valido
-            dal 1895 primo film della storia al prossimo anno
-         */
-        int annoCorrente = Year.now().getValue();
-        if(film.getYearOfRelease()<1895 || film.getYearOfRelease()>annoCorrente+1)
-            throw new ValidationException("Invalid Year: valid range from 1895 to "+annoCorrente+1);
-
+        validateFilm(film);
         filmRepository.save(film);
     }
 
@@ -37,14 +26,26 @@ public class FilmService {
     }
 
     public void update(Film film){
-        if(!filmRepository.exists(film.getId()))
-            throw new FilmNotFoundException("Film "+film.getTitle()+"not found");
-        filmRepository.update(film);
+        validateFilm(film);
+        if(!filmRepository.update(film))
+            throw new FilmNotFoundException(film.getTitle()+" not found to update");
     }
 
     public void delete(Integer id){
-        if(!filmRepository.exists(id))
+        if(!filmRepository.delete(id))
             throw new FilmNotFoundException("Film with id "+id+"not found");
-        filmRepository.delete(id);
+    }
+
+    private void validateFilm(Film film){
+        if (film == null) throw new ValidationException("Film data cannot be null");
+        if(film.getTitle()==null || film.getTitle().isEmpty())
+            throw new ValidationException("The title of the film must be specified.");
+        if(film.getRating()<1 || film.getRating()>5)
+            throw new ValidationException("The rating must be between 1 and 5.");
+
+        //    Range Film valido dal 1895 (primo film della storia) al prossimo anno (film che uscirà in futuro)
+        int annoCorrente = Year.now().getValue();
+        if(film.getYearOfRelease()<1895 || film.getYearOfRelease()>annoCorrente+1)
+            throw new ValidationException("Invalid Year: valid range from 1895 to "+(annoCorrente+1));
     }
 }

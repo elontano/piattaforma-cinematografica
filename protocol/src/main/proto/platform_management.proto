@@ -41,7 +41,7 @@ message SearchFilmRequest{
 
   enum ViewingStatusDTO {
     UNKNOWN_STATUS = 0;//per eventuali errori, lo stato di visione deve essere sempre specificato
-    TO_WATCH = 1; //potrebbe essere lo stato di visione di default
+    TO_WATCH = 1; //stato di visione di default
     WATCHING = 2;
     WATCHED = 3;
   }
@@ -54,7 +54,6 @@ message OperationResponse{
   bool valid = 1; //true operazione riuscita
   string message = 2; //messaggio di errore o conferma
 }
-
 
 message FilmIdRequest{
   uint32 id = 1;
