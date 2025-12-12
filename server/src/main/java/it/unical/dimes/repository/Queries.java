@@ -32,27 +32,27 @@ public class Queries {
     public static String buildSearchQuery(FilmFilter filter, List<Object> params){
         StringBuilder query = new StringBuilder("SELECT * FROM "+TABLE+" WHERE 1=1");
 
-        if(!filter.getTitle().isEmpty()){
+        if(filter.getTitle() !=null && !filter.getTitle().isEmpty()){
             query.append(" AND "+TITLE+" LIKE ? ");
             params.add("%"+filter.getTitle()+"%");
         }
 
-        if(!filter.getDirector().isEmpty()){
+        if(filter.getDirector() != null && !filter.getDirector().isEmpty()){
             query.append(" AND "+DIRECTOR+" LIKE ?");
             params.add("%"+filter.getDirector()+"%");
         }
 
-        if(!filter.getGenre().isEmpty()){
+        if(filter.getGenre() != null && !filter.getGenre().isEmpty()){
             query.append(" AND "+GENRE+" LIKE ?");
             params.add("%"+filter.getGenre()+"%");
         }
 
-        if (!(filter.getYearOfRelease()==null || filter.getYearOfRelease()==0)){
-            query.append(" AND "+YEAR+" LIKE ?");
-            params.add("%"+filter.getYearOfRelease()+"%");
+        if (filter.getYearOfRelease() !=null && filter.getYearOfRelease()!=0){
+            query.append(" AND "+YEAR+" = ?");
+            params.add(filter.getYearOfRelease());
         }
 
-        if(!(filter.getViewingStatus() == ViewingStatus.UNKNOWN_STATUS)){
+        if( filter.getViewingStatus() != null && filter.getViewingStatus() != ViewingStatus.UNKNOWN_STATUS){
             query.append(" AND "+STATUS+" = ?");
             params.add(filter.getViewingStatus().name());
         }
@@ -73,5 +73,4 @@ public class Queries {
         }
         return query.toString();
     }
-
 }
