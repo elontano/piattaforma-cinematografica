@@ -1,7 +1,7 @@
 package it.unical.dimes.repository;
 
-import it.unical.dimes.entity.Film;
-import it.unical.dimes.entity.FilmFilter;
+import it.unical.dimes.entities.Film;
+import it.unical.dimes.entities.FilmFilter;
 
 import java.util.List;
 

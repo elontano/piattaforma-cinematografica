@@ -1,6 +1,6 @@
 package it.unical.dimes.mapper;
 
-import it.unical.dimes.entity.Film;
+import it.unical.dimes.entities.Film;
 import it.unical.dimes.protocol.FilmDTO;
 
 public class FilmMapper {

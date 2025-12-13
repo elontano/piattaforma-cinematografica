@@ -28,8 +28,8 @@ message SearchFilmRequest{
   optional uint32 year_of_release = 4;
   optional ViewingStatusDTO viewing_status = 5;
 
-  SortByDTO sort_by = 6;
-  bool sort_ascending = 7; //true asc, false disc
+  optional SortByDTO sort_by = 6;
+  optional bool sort_ascending = 7; //true asc, false disc
 }
 
   enum SortByDTO{

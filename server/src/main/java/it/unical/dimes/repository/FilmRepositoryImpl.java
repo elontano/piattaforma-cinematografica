@@ -1,8 +1,8 @@
 package it.unical.dimes.repository;
 
-import it.unical.dimes.entity.Film;
-import it.unical.dimes.entity.FilmFilter;
-import it.unical.dimes.entity.ViewingStatus;
+import it.unical.dimes.entities.Film;
+import it.unical.dimes.entities.FilmFilter;
+import it.unical.dimes.entities.ViewingStatus;
 
 import java.sql.*;
 import java.util.ArrayList;

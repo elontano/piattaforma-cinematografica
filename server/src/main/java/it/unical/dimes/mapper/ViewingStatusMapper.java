@@ -1,6 +1,6 @@
 package it.unical.dimes.mapper;
 
-import it.unical.dimes.entity.ViewingStatus;
+import it.unical.dimes.entities.ViewingStatus;
 import it.unical.dimes.protocol.ViewingStatusDTO;
 
 public class ViewingStatusMapper {
