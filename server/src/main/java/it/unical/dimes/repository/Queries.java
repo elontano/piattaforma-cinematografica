@@ -1,8 +1,8 @@
 package it.unical.dimes.repository;
 
-import it.unical.dimes.entity.FilmFilter;
-import it.unical.dimes.entity.SortBy;
-import it.unical.dimes.entity.ViewingStatus;
+import it.unical.dimes.entities.FilmFilter;
+import it.unical.dimes.entities.SortBy;
+import it.unical.dimes.entities.ViewingStatus;
 
 import java.util.List;
 

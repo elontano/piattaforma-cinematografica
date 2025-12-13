@@ -1,30 +1,32 @@
-package it.unical.dimes.entity;
+package it.unical.dimes.entities;
 
-public class FilmFilter {
-
+public class Film {
+    private final Integer id;
     private final String title;
     private final String director ;
     private final String genre;
     private final Integer yearOfRelease;
     private final Integer rating;
     private final ViewingStatus viewingStatus;
-    private final SortBy sortBy;
-    private final boolean sortDirection;
 
     public static class Builder{
+        //required parameters
+        private final String title;
 
-        private String title = "";
+        //optional
+        private Integer id = null;
         private String director = "";
         private String genre = "";
         private Integer yearOfRelease = 0;
         private Integer rating = 0;
-        private ViewingStatus viewingStatus = ViewingStatus.UNKNOWN_STATUS; //default
-        private SortBy sortBy = SortBy.NONE;
-        private boolean sortDirection = true; //true ascen //false
+        private ViewingStatus viewingStatus = ViewingStatus.TO_WATCH; //default
 
-
-        public Builder title(String title){
+        public Builder(String title){
             this.title=title;
+        }
+
+        public Builder id(Integer id){
+            this.id=id;
             return this;
         }
 
@@ -53,30 +55,19 @@ public class FilmFilter {
             return this;
         }
 
-        public Builder sortBy(SortBy sortBy){
-            this.sortBy=sortBy;
-            return this;
-        }
-
-        public Builder sortDirection(boolean sortDirection){
-            this.sortDirection=sortDirection;
-            return this;
-        }
-
-        public FilmFilter build(){
-            return new FilmFilter(this);
+        public Film build(){
+            return new Film(this);
         }
     }
 
-    private FilmFilter(Builder builder){
+    private Film (Builder builder){
+        id=builder.id;
         title=builder.title;
         director=builder.director;
         genre=builder.genre;
         yearOfRelease=builder.yearOfRelease;
         rating=builder.rating;
         viewingStatus=builder.viewingStatus;
-        sortBy=builder.sortBy;
-        sortDirection=builder.sortDirection;
     }
 
     public String getDirector() {
@@ -87,12 +78,12 @@ public class FilmFilter {
         return genre;
     }
 
-    public Integer getRating() {
-        return rating;
+    public Integer getId() {
+        return id;
     }
 
-    public SortBy getSortBy() {
-        return sortBy;
+    public Integer getRating() {
+        return rating;
     }
 
     public String getTitle() {
@@ -107,7 +98,25 @@ public class FilmFilter {
         return yearOfRelease;
     }
 
-    public boolean getSortDirection(){
-        return sortDirection;
+    @Override
+    public String toString() {
+        return "{id= "+id
+                +" title= '"
+                +title+"'"
+                +" director= '"
+                +director+"'"
+                +" year= '"
+                +yearOfRelease+"'";
+        //da completare
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

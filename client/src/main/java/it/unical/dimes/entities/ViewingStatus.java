@@ -1,4 +1,4 @@
-package it.unical.dimes.entity;
+package it.unical.dimes.entities;
 
 public enum ViewingStatus {
     UNKNOWN_STATUS,

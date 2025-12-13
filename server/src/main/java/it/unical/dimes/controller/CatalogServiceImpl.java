@@ -1,10 +1,9 @@
 package it.unical.dimes.controller;
 
 import io.grpc.stub.StreamObserver;
-import it.unical.dimes.entity.Film;
-import it.unical.dimes.entity.FilmFilter;
-import it.unical.dimes.entity.SortBy;
-import it.unical.dimes.entity.ViewingStatus;
+import it.unical.dimes.entities.Film;
+import it.unical.dimes.entities.FilmFilter;
+import it.unical.dimes.entities.SortBy;
 import it.unical.dimes.exception.CatalogException;
 import it.unical.dimes.exception.FilmNotFoundException;
 import it.unical.dimes.mapper.FilmMapper;
