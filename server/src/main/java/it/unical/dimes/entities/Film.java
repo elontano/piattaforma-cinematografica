@@ -1,7 +1,10 @@
 package it.unical.dimes.entities;
 
+import java.util.Objects;
+
 public class Film {
     private final Integer id;
+    private final String userId;
     private final String title;
     private final String director ;
     private final String genre;
@@ -15,6 +18,7 @@ public class Film {
 
         //optional
         private Integer id = null;
+        private String userId = "";
         private String director = "";
         private String genre = "";
         private Integer yearOfRelease = 0;
@@ -27,6 +31,11 @@ public class Film {
 
         public Builder id(Integer id){
             this.id=id;
+            return this;
+        }
+
+        public Builder userId(String userId){
+            this.userId = userId;
             return this;
         }
 
@@ -62,6 +71,7 @@ public class Film {
 
     private Film (Builder builder){
         id=builder.id;
+        userId = builder.userId;;
         title=builder.title;
         director=builder.director;
         genre=builder.genre;
@@ -69,6 +79,8 @@ public class Film {
         rating=builder.rating;
         viewingStatus=builder.viewingStatus;
     }
+
+    public String getUserId(){return userId;}
 
     public String getDirector() {
         return director;
@@ -101,6 +113,7 @@ public class Film {
     @Override
     public String toString() {
         return "{id= "+id
+                +"userID ="+userId
                 +" title= '"
                 +title+"'"
                 +" director= '"
@@ -111,12 +124,21 @@ public class Film {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if( o == this) return true;
+        if( ! (o instanceof Film)) return false;
+        Film film = (Film) o;
+        if(this.id != null && film.id != null)
+            return Objects.equals(id,film.id);
+        return Objects.equals(userId,film.userId) &&
+                Objects.equals(title,film.title) &&
+                Objects.equals(director,film.director) &&
+                Objects.equals(yearOfRelease, film.yearOfRelease);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        if(id != null) return Objects.hashCode(id);
+        return Objects.hash(userId,title,director,yearOfRelease);
     }
 }

@@ -1,11 +1,13 @@
 package it.unical.dimes.controller;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import it.unical.dimes.entities.Film;
 import it.unical.dimes.entities.FilmFilter;
 import it.unical.dimes.entities.SortBy;
 import it.unical.dimes.exception.CatalogException;
 import it.unical.dimes.exception.FilmNotFoundException;
+import it.unical.dimes.exception.ValidationException;
 import it.unical.dimes.mapper.FilmMapper;
 import it.unical.dimes.mapper.ViewingStatusMapper;
 import it.unical.dimes.protocol.*;
@@ -22,38 +24,30 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
     }
 
     @Override
-    public void create(FilmDTO request, StreamObserver<OperationResponse> responseObserver) {
+    public void create(FilmDTO request, StreamObserver<FilmDTO> responseObserver) {
         Film film = FilmMapper.fromGrpc(request);
-        OperationResponse response;
+        String userId = request.getUserId();
+
+        FilmDTO response;
         try {
-            filmService.save(film);
-             response = OperationResponse.newBuilder()
-                    .setValid(true)
-                    .setMessage("Film saved succesfully")
-                    .build();
-
+            Film saved = filmService.save(film,userId);
+            response = FilmMapper.toGrpc(saved);
         }catch (CatalogException e){
-            System.err.println("Errore "+e.getMessage());
-            response = OperationResponse.newBuilder()
-                    .setValid(false)
-                    .setMessage("Error "+e.getMessage())
-                    .build();
-
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+            return;
         }catch (Exception e){
-            response = OperationResponse.newBuilder()
-                    .setValid(false)
-                    .setMessage("Unknown Internal error.")
-                    .build();
+           responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
+           return;
         }
-
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void searchFilms(SearchFilmRequest request, StreamObserver<FilmListResponse> responseObserver) {
+        String userId = request.getUserId();
         FilmFilter filter = mapToFilter(request);
-        List<Film> listFilm = filmService.search(filter);
+        List<Film> listFilm = filmService.search(filter,userId);
         System.out.println("Trovati "+listFilm.size()+" film");
         FilmListResponse.Builder responseBuilder = FilmListResponse.newBuilder();
 
@@ -69,23 +63,26 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
     @Override
     public void update(FilmDTO request, StreamObserver<OperationResponse> responseObserver) {
         Film film = FilmMapper.fromGrpc(request);
+        String userId = request.getUserId();
         OperationResponse response;
         try {
-            filmService.update(film);
+            filmService.update(film,userId);
+
             response = OperationResponse.newBuilder()
                     .setValid(true)
                     .setMessage(film.getTitle()+" updated")
                     .build();
-        }catch (FilmNotFoundException ffe){
-            response = OperationResponse.newBuilder()
-                    .setValid(false)
-                    .setMessage(film.getTitle()+" not found!")
-                    .build();
-        }catch (Exception e){
-            response = OperationResponse.newBuilder()
-                    .setValid(false)
-                    .setMessage("Unknown Internal Error ")
-                    .build();
+        }catch (FilmNotFoundException e){
+            responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+            return;
+
+        }catch (ValidationException e) {
+            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+            return;
+        } catch (Exception e){
+            responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
+            return;
+
         }
 
         responseObserver.onNext(response);
@@ -95,25 +92,22 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
     @Override
     public void delete(FilmIdRequest request, StreamObserver<OperationResponse> responseObserver) {
         Integer id = request.getId();
+        String userId = request.getUserId();
         OperationResponse response;
         try {
-            filmService.delete(id);
+            filmService.delete(id,userId);
+
             response = OperationResponse.newBuilder()
                     .setValid(true)
                     .setMessage("film with id: "+id+" deleted")
                     .build();
-        }catch (FilmNotFoundException ffe){
-            response = OperationResponse.newBuilder()
-                    .setValid(false)
-                    .setMessage("film with id: "+id+" not found!")
-                    .build();
+        }catch (FilmNotFoundException e){
+            responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
+            return;
         }catch (Exception e){
-            response = OperationResponse.newBuilder()
-                    .setValid(false)
-                    .setMessage("Unknown Internal Error ")
-                    .build();
+            responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
+            return;
         }
-
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -137,7 +131,6 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
             builder.viewingStatus(ViewingStatusMapper.fromGrpc(request.getViewingStatus()));
         }
         if (request.getSortBy() != SortByDTO.NONE) {
-            // Esempio: mappa l'enum gRPC in una enum di dominio o stringa
             builder.sortBy(SortBy.valueOf(request.getSortBy().name()));
             builder.sortDirection(request.getSortAscending());
         }

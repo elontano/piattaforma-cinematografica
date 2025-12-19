@@ -5,31 +5,33 @@ option java_multiple_files = true; //ci permette di creare per ogni message un f
 
 service CatalogService{
   rpc SearchFilms(SearchFilmRequest) returns (FilmListResponse);
-  rpc Create(FilmDTO) returns (OperationResponse);
+  rpc Create(FilmDTO) returns (FilmDTO);
   rpc Update(FilmDTO) returns (OperationResponse);
   rpc Delete(FilmIdRequest) returns (OperationResponse);
 }
 
 message FilmDTO{
-  uint32 id = 1;
-  string title = 2;
-  string director = 3;
-  string genre = 4;
-  uint32 year_of_release = 5;
-  uint32 rating = 6;
-  ViewingStatusDTO viewing_status = 7;
+  uint32 id = 1; //in Create ignoro l'id che poi verra assegnato dal DB.
+  string user_id = 2;
+  string title = 3;
+  string director = 4;
+  string genre = 5;
+  uint32 year_of_release = 6;
+  uint32 rating = 7;
+  ViewingStatusDTO viewing_status = 8;
 }
 
 message SearchFilmRequest{
   //Se sono vuoti i campi si ignorano
-  optional string title = 1;
-  optional string director = 2;
-  optional string genre = 3;
-  optional uint32 year_of_release = 4;
-  optional ViewingStatusDTO viewing_status = 5;
+  string userId = 1;
+  optional string title = 2;
+  optional string director = 3;
+  optional string genre = 4;
+  optional uint32 year_of_release = 5;
+  optional ViewingStatusDTO viewing_status = 6;
 
-  optional SortByDTO sort_by = 6;
-  optional bool sort_ascending = 7; //true asc, false disc
+  optional SortByDTO sort_by = 7;
+  optional bool sort_ascending = 8; //true asc, false disc
 }
 
   enum SortByDTO{
@@ -57,4 +59,5 @@ message OperationResponse{
 
 message FilmIdRequest{
   uint32 id = 1;
+  string user_id = 2;
 }

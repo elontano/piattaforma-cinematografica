@@ -24,19 +24,21 @@ public class FilmRepositoryImpl implements FilmRepository {
         this.dbManager = dbManager;
     }
 
-    public Film save(Film film) {
-        //Film: ID,TITLE,DIRECTOR,YEAR,GENRE,RATIN,VS;
+
+    public Film save(Film film,String userID) {
+        //Film : ID,TITLE,DIRECTOR,YEAR,GENRE,RATIN,VS;
         String query = Queries.INSERT;
         int id = -1;
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1, film.getTitle());
-            setStringOrNull(ps, 2, film.getDirector());
-            setIntOrNull(ps, 3, film.getYearOfRelease());
-            setStringOrNull(ps, 4, film.getGenre());
-            setIntOrNull(ps, 5, film.getRating());
-            ps.setString(6, film.getViewingStatus().name());
+            ps.setString(1,userID);
+            ps.setString(2, film.getTitle());
+            setStringOrNull(ps, 3, film.getDirector());
+            setIntOrNull(ps, 4, film.getYearOfRelease());
+            setStringOrNull(ps, 5, film.getGenre());
+            setIntOrNull(ps, 6, film.getRating());
+            ps.setString(7, film.getViewingStatus().name());
 
             int affRows = ps.executeUpdate();
 
@@ -68,11 +70,11 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
-    public List<Film> search(FilmFilter filter) {
+    public List<Film> search(FilmFilter filter, String userId) {
 
         //verrà popolato da buildSearchQuery
         List<Object> params = new ArrayList<>();
-        String query = Queries.buildSearchQuery(filter,params);
+        String query = Queries.buildSearchQuery(filter,userId,params);
 
         List<Film> listFilm = new ArrayList<>();
 
@@ -96,7 +98,7 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
-    public boolean update(Film film) {
+    public boolean update(Film film,String userId) {
         //Film: ID,TITLE,DIRECTOR,YEAR,GENRE,RATING,VS;
         String query = Queries.UPDATE;
         int rowsAffected = 0;
@@ -110,8 +112,10 @@ public class FilmRepositoryImpl implements FilmRepository {
             setIntOrNull(ps,5, film.getRating());
             ps.setString(6,film.getViewingStatus().name());
 
-            //WHERE id = ?
+            //WHERE Film ID = ?
             ps.setInt(7,film.getId());
+            //WHERE User ID = ?
+            ps.setString(8,userId);
 
             rowsAffected = ps.executeUpdate();
         }catch (SQLException e ){
@@ -121,13 +125,15 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
-    public boolean delete(Integer ID) {
+    public boolean delete(Integer ID, String userId) {
         String query = Queries.DELETE;
         int rowsAffected = 0;
         try(Connection connection = dbManager.getConnection();
             PreparedStatement ps = connection.prepareStatement(query)){
 
             ps.setInt(1,ID);
+            ps.setString(2,userId);
+
             rowsAffected = ps.executeUpdate();
         }catch (SQLException e){
             throw new RuntimeException("DB error during delete");

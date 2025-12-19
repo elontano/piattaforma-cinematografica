@@ -1,4 +1,4 @@
-package it.unical.dimes.entities;
+package it.unical.dimes.model;
 
 public enum SortBy {
     NONE, //valore di default
