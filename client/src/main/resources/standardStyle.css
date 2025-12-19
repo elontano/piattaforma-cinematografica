@@ -1,0 +1,58 @@
+
+
+.root {
+    -fx-color-primary: #2196F3;
+    -fx-color-success: #4CAF50;
+    -fx-color-danger:  #d32f2f;
+    -fx-color-neutral: #e0e0e0;
+    -fx-bg-dark:       #1e1e1e;
+}
+
+.button {
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 30;
+    -fx-text-fill: white;
+}
+
+.btn-search {
+    -fx-background-color: -fx-color-primary;
+}
+
+.btn-new {
+    -fx-background-color: -fx-color-success;
+}
+
+.btn-delete {
+    -fx-background-color: -fx-color-danger;
+    -fx-text-fill: black; /* Override specifico */
+
+}
+
+.btn-edit {
+    -fx-background-color: -fx-color-neutral;
+    -fx-text-fill: black; /* Override specifico */
+}
+
+.text-field-custom {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-background-radius: 30;
+}
+
+.combo-box{
+    -fx-background-radius: 30;
+}
+
+.tool-bar{
+    -fx-background-color: #2d2d2d;
+}
+
+.toggle-button{
+    -fx-border-radius: 30;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-color: #555555;
+    -fx-background-radius: 30;
+    -fx-cursor: hand
+}

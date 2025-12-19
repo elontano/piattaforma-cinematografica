@@ -1,9 +1,7 @@
 package it.unical.dimes.model;
 
-public enum ViewingStatus {
-    UNKNOWN_STATUS,
+public enum ViewingStatusUI {
     TO_WATCH,
     WATCHING,
-    WATCHED;
+    WATCHED
 }
-
