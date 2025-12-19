@@ -110,4 +110,18 @@ public class FilmFilter {
     public boolean getSortDirection(){
         return sortDirection;
     }
+
+    @Override
+    public String toString() {
+        return "FilmFilter{" +
+                "director='" + director + '\'' +
+                ", title='" + title + '\'' +
+                ", genre='" + genre + '\'' +
+                ", yearOfRelease=" + yearOfRelease +
+                ", rating=" + rating +
+                ", viewingStatus=" + viewingStatus +
+                ", sortBy=" + sortBy +
+                ", sortDirection=" + sortDirection +
+                '}';
+    }
 }

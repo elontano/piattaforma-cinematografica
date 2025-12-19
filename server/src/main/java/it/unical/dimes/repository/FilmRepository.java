@@ -7,13 +7,12 @@ import java.util.List;
 
 public interface FilmRepository {
 
-    Film save(Film film);
+    Film save(Film film,String userId);
 
-    List<Film> search(FilmFilter filter);
+    List<Film> search(FilmFilter filter,String userId);
 
-    boolean update(Film ID);
+    boolean update(Film ID,String userId);
 
-    boolean delete(Integer ID);
+    boolean delete(Integer ID,String userId);
 
-    boolean exists(Integer ID);
 }

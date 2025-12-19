@@ -16,23 +16,27 @@ public class FilmService {
         this.filmRepository=filmRepository;
     }
 
-    public void save(Film film){
+    public Film save(Film film, String userId){
+        validateUser(userId);
         validateFilm(film);
-        filmRepository.save(film);
+        return filmRepository.save(film,userId);
     }
 
-    public List<Film> search(FilmFilter filter){
-        return filmRepository.search(filter);
+    public List<Film> search(FilmFilter filter,String userId){
+        validateUser(userId);
+        return filmRepository.search(filter,userId);
     }
 
-    public void update(Film film){
+    public void update(Film film, String userId){
+        validateUser(userId);
         validateFilm(film);
-        if(!filmRepository.update(film))
+        if(!filmRepository.update(film,userId))
             throw new FilmNotFoundException(film.getTitle()+" not found to update");
     }
 
-    public void delete(Integer id){
-        if(!filmRepository.delete(id))
+    public void delete(Integer id, String userId){
+        validateUser(userId);
+        if(!filmRepository.delete(id,userId))
             throw new FilmNotFoundException("Film with id "+id+"not found");
     }
 
@@ -53,6 +57,12 @@ public class FilmService {
             if (film.getYearOfRelease() < 1895 || film.getYearOfRelease() > annoCorrente + 1) {
                 throw new ValidationException("Invalid Year: valid range from 1895 to " + (annoCorrente + 1));
             }
+        }
+    }
+
+    private void validateUser(String userId){
+        if(userId == null || userId.trim().isEmpty()){
+            throw new ValidationException("User ID cannot be null or empty");
         }
     }
 }

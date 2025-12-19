@@ -10,6 +10,7 @@ public class Queries {
     private static final String TABLE = "Film";
     //nomi colonne
     private static final String ID = "id";
+    private static final String USER_ID = "id";
     private static final String TITLE = "title";
     private static final String DIRECTOR = "director";
     private static final String YEAR = "year_of_release";
@@ -18,19 +19,21 @@ public class Queries {
     private static final String STATUS = "viewing_status";
 
     public static final String INSERT = "INSERT INTO " + TABLE +
-            String.format("(%s, %s, %s, %s, %s, %s)", TITLE, DIRECTOR, YEAR, GENRE, RATING, STATUS) +
+            String.format("(%s, %s, %s, %s, %s, %s, %s)",USER_ID, TITLE, DIRECTOR, YEAR, GENRE, RATING, STATUS) +
             " VALUES (?, ?, ?, ?, ?, ?)";
 
     public static final String UPDATE = "UPDATE " + TABLE + " SET "
-            + String.format("%s = ?,%s = ?,%s = ?,%s = ?,%s = ?,%s = ? WHERE %s = ?",TITLE,DIRECTOR,YEAR,GENRE,RATING,STATUS,ID);
+            + String.format("%s=?, %s=?, %s=?, %s=?, %s=?, %s=? WHERE %s=? AND %s=?",
+            TITLE, DIRECTOR, YEAR, GENRE, RATING, STATUS, ID, USER_ID);
 
-    
-    public static final String DELETE = "DELETE FROM "+TABLE+" WHERE "+ID+" = ?";
+    public static final String DELETE = "DELETE FROM " + TABLE + " WHERE " + ID + " = ? AND " + USER_ID + " = ?";
 
-    public static final String EXISTS = "SELECT COUNT(*) FROM "+TABLE+" WHERE "+ID+" = ?";
+    public static final String EXISTS = "SELECT COUNT(*) FROM " + TABLE + " WHERE " + ID + " = ? AND " + USER_ID + " = ?";
 
-    public static String buildSearchQuery(FilmFilter filter, List<Object> params){
-        StringBuilder query = new StringBuilder("SELECT * FROM "+TABLE+" WHERE 1=1");
+    public static String buildSearchQuery(FilmFilter filter, String useriD, List<Object> params){
+        StringBuilder query = new StringBuilder("SELECT * FROM "+TABLE+" WHERE "+USER_ID+" = ?");
+
+        params.add(useriD);
 
         if(filter.getTitle() !=null && !filter.getTitle().isEmpty()){
             query.append(" AND "+TITLE+" LIKE ? ");
@@ -45,6 +48,11 @@ public class Queries {
         if(filter.getGenre() != null && !filter.getGenre().isEmpty()){
             query.append(" AND "+GENRE+" LIKE ?");
             params.add("%"+filter.getGenre()+"%");
+        }
+
+        if (filter.getRating() != null && filter.getRating() > 0) {
+            query.append(" AND " + RATING + " = ?");
+            params.add(filter.getRating());
         }
 
         if (filter.getYearOfRelease() !=null && filter.getYearOfRelease()!=0){
