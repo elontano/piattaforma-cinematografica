@@ -1,4 +1,4 @@
-package it.unical.dimes.entities;
+package it.unical.dimes.model;
 
 public class FilmFilter {
 
@@ -18,7 +18,7 @@ public class FilmFilter {
         private String genre = "";
         private Integer yearOfRelease = 0;
         private Integer rating = 0;
-        private ViewingStatus viewingStatus = ViewingStatus.UNKNOWN_STATUS; //default
+        private ViewingStatus viewingStatus = ViewingStatus.TO_WATCH; //default
         private SortBy sortBy = SortBy.NONE;
         private boolean sortDirection = true; //true ascen //false
 

@@ -2,10 +2,10 @@ package it.unical.dimes.service;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import it.unical.dimes.entities.Film;
-import it.unical.dimes.entities.FilmFilter;
-import it.unical.dimes.entities.SortBy;
-import it.unical.dimes.entities.ViewingStatus;
+import it.unical.dimes.model.Film;
+import it.unical.dimes.model.FilmFilter;
+import it.unical.dimes.model.SortBy;
+import it.unical.dimes.model.ViewingStatus;
 import it.unical.dimes.mapper.FilmMapper;
 import it.unical.dimes.mapper.SortByMapper;
 import it.unical.dimes.mapper.ViewingStatusMapper;
@@ -24,7 +24,7 @@ public class FilmServiceClient {
         this.channel = ManagedChannelBuilder.forAddress(host,port)
                 .usePlaintext()//Senza SSL
                 .build();
-        this.blockingStub = CatalogServiceGrpc.newBlockingStub( this.channel);
+        this.blockingStub = CatalogServiceGrpc.newBlockingStub(this.channel);
     }
 
     public void shutdown() throws InterruptedException{
@@ -33,35 +33,20 @@ public class FilmServiceClient {
         System.out.println("Canale chiuso ");
     }
 
-    public void createFilm(Film film){
-        FilmDTO request = FilmMapper.toGrpc(film);
+    public void createFilm(Film film,String userId){
+        FilmDTO.Builder requestBuilder = FilmMapper.toGrpc(film).toBuilder();
+        requestBuilder.setUserId(userId);
+        FilmDTO response = blockingStub.create(requestBuilder.build());
 
-        OperationResponse response = blockingStub.create(request);
-
-        if(!response.getValid())
-            throw new RuntimeException(response.getMessage());
-
-        System.out.println(response.getMessage());
     }
 
-
-    public List<Film> searchFilms(){
-        SearchFilmRequest request = SearchFilmRequest.newBuilder().build();
-
-        FilmListResponse response = blockingStub.searchFilms(request);
-        List<FilmDTO> listDTOs = response.getFilmListList();
-
-        List<Film> listFilm = new ArrayList<>();
-
-        for (FilmDTO filmDTO : listDTOs){
-            listFilm.add(FilmMapper.fromGrpc(filmDTO));
-        }
-        return listFilm;
+    public List<Film> searchFilms(String userId){
+        return searchFilms(new FilmFilter.Builder().build(),userId);
     }
 
-    public List<Film> searchFilms(FilmFilter filter){
+    public List<Film> searchFilms(FilmFilter filter,String userId){
+        SearchFilmRequest searchFilmRequest = createFilmFilter(filter,userId);
 
-        SearchFilmRequest searchFilmRequest = createFilmFilter(filter);
 
         FilmListResponse response = blockingStub.searchFilms(searchFilmRequest);
         List<FilmDTO> listDTOs = response.getFilmListList();
@@ -74,23 +59,28 @@ public class FilmServiceClient {
         return listFilm;
     }
 
-    public void update(Film film){
-        FilmDTO request = FilmMapper.toGrpc(film);
-        OperationResponse response = blockingStub.update(request);
+    public void update(Film film,String userId){
+        FilmDTO.Builder requestBuilder = FilmMapper.toGrpc(film).toBuilder();
+        requestBuilder.setUserId(userId);
+
+        OperationResponse response = blockingStub.update(requestBuilder.build());
         if(!response.getValid())
             throw new RuntimeException(response.getMessage());
         System.out.println(response.getMessage());
     }
 
-    public void delete(Integer id){
-        FilmIdRequest filmIdRequest = FilmIdRequest.newBuilder().setId(id).build();
+    public void delete(Integer id,String userId){
+        FilmIdRequest filmIdRequest = FilmIdRequest.newBuilder()
+                .setId(id)
+                .setUserId(userId)
+                .build();
         OperationResponse response = blockingStub.delete(filmIdRequest);
         if(!response.getValid())
             throw new RuntimeException(response.getMessage());
         System.out.println(response.getMessage());
     }
 
-    private SearchFilmRequest createFilmFilter(FilmFilter filter){
+    private SearchFilmRequest createFilmFilter(FilmFilter filter, String userId){
         ViewingStatusDTO viewingStatusDTO = ViewingStatusMapper.toGrpc(filter.getViewingStatus());
         SortByDTO sortByDTO = SortByMapper.toGrpc(filter.getSortBy());
 
@@ -104,12 +94,14 @@ public class FilmServiceClient {
             searchFilmRequest.setGenre(filter.getGenre());
         if(filter.getYearOfRelease()!=null && !(filter.getYearOfRelease()<1895))
             searchFilmRequest.setYearOfRelease(filter.getYearOfRelease());
-        if(filter.getViewingStatus() != null && !filter.getViewingStatus().equals(ViewingStatus.UNKNOWN_STATUS))
+        if(filter.getViewingStatus() != null )
             searchFilmRequest.setViewingStatus(viewingStatusDTO);
         if(filter.getSortBy()!=null && !filter.getSortBy().equals(SortBy.NONE)) {
             searchFilmRequest.setSortBy(sortByDTO);
             searchFilmRequest.setSortAscending(filter.getSortDirection());
         }
+
+        searchFilmRequest.setUserId(userId);
 
         return searchFilmRequest.build();
     }

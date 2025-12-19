@@ -1,0 +1,102 @@
+package it.unical.dimes.view;
+
+import it.unical.dimes.factory.UIFactory;
+import it.unical.dimes.model.Film;
+import it.unical.dimes.model.FilmFilter;
+import javafx.collections.ObservableList;
+import javafx.scene.Parent;
+import javafx.scene.layout.BorderPane;
+
+import java.util.function.Consumer;
+
+public class FilmView {
+    private BorderPane root; //contenitore
+    private FilmTable filmTable;
+    private UIFactory uiFactory;
+
+    // Event Handlers
+    private Consumer<Film> onEditAction;
+    private Consumer<Film> onDeleteAction;
+    private Consumer<FilmFilter> onSearchAction;
+    private Runnable onAddAction;
+
+    public FilmView(UIFactory factory) {
+        this.uiFactory = factory;
+        initView();
+    }
+
+    // Restituisce la vista da passare alla Scene
+    public Parent getView() {
+        return root;
+    }
+
+    private void initView() {
+        root = new BorderPane();
+
+        ToolBar toolBar = new ToolBar(uiFactory);
+        filmTable = new FilmTable(uiFactory);
+
+        toolBar.setOnSearchAction(filter -> {
+            if(onSearchAction != null)
+                onSearchAction.accept(filter);
+        });
+
+        toolBar.setOnAddAction(()->{
+            if(onAddAction!=null)
+                onAddAction.run();
+        });
+
+        filmTable.setOnEditAction(film -> {
+            if(onEditAction != null)
+                onEditAction.accept(film);
+        });
+
+        filmTable.setOnDeleteAction(film -> {
+            if(onDeleteAction!=null)
+                onDeleteAction.accept(film);
+        });
+
+        root.setTop(toolBar.getView());
+        root.setCenter(filmTable.getView());
+
+        //stile CSS
+        applyStyles();
+    }
+
+    public void setFilmData(ObservableList<Film> films){
+        filmTable.setItems(films);
+    }
+
+    public FilmTable getFilmTable() {
+        return filmTable;
+    }
+
+    public ObservableList<Film> getFilmsLists(){
+        return filmTable.getItems();
+    }
+
+    public void refreshTable(){
+        filmTable.refresh();
+    }
+
+    // Setters per i Consumer (chiamati dal Controller)
+    public void setOnSearchAction(Consumer<FilmFilter> action) { this.onSearchAction = action; }
+    public void setOnAddAction(Runnable action) { this.onAddAction = action; }
+    public void setOnEditAction(Consumer<Film> action) { this.onEditAction = action; }
+    public void setOnDeleteAction(Consumer<Film> action) { this.onDeleteAction = action; }
+
+    private void applyStyles() {
+        root.setStyle("-fx-background-color: #1e1e1e;");
+        String tableStyle =
+                ".table-view { -fx-background-color: transparent; }" +
+                        ".table-view .column-header-background { -fx-background-color: transparent; }" +
+                        ".table-view .column-header { -fx-background-color: #2d2d2d; }" +
+                        ".table-view .column-header .label { -fx-text-fill: white; }" +
+                        ".table-row-cell { -fx-background-color: #1e1e1e; -fx-text-fill: white; }" +
+                        ".table-row-cell:hover { -fx-background-color: #333333; }" +
+                        ".table-cell { -fx-text-fill: white; -fx-alignment: CENTER-LEFT; }";
+
+        root.getStylesheets().add("data:text/css," + tableStyle.replace(" ", "%20"));
+    }
+
+}
