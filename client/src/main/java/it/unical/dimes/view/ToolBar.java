@@ -18,7 +18,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class ToolBar {
@@ -31,6 +30,7 @@ public class ToolBar {
     private TextField directorField;
     private TextField genreField;
     private TextField yearField;
+
     //    private Spinner<Integer> yearSpinner; //campo con frecce su e giù
     private ComboBox<ViewingStatus> statusComboBox;
     private ComboBox<SortBy> sortByComboBox;
@@ -38,7 +38,7 @@ public class ToolBar {
 
     private Button searchButton;
     private Button addButton;
-//    private Button refreshButton; // per ricaricare senza filtri
+    // private Button refreshButton; per ricaricare senza filtri
 
     // Event Handlers
     private Consumer<FilmFilter> onSearchAction;
@@ -77,10 +77,7 @@ public class ToolBar {
         genreField = uiFactory.createTextField("Genre...",100);
         yearField = uiFactory.createTextField("Year...",80);
 
-
-
-
-        //PER non vedere UNKNOWN STATUS nella toolbar
+        //Provvisorio per NON vedere UNKNOWN STATUS nella toolbar
         ViewingStatus[] vs = ViewingStatus.values();
         ViewingStatus[] newVS = new ViewingStatus[vs.length-1];
         for(int i=1;i<vs.length;i++){
@@ -129,7 +126,7 @@ public class ToolBar {
                 year = Integer.parseInt(yearText);
             }
         } catch (NumberFormatException e) {
-            System.err.println("Anno non valido inserito, filtro anno ignorato.");
+            System.err.println("Invalid year, year filter ignored.");
         }
 
         ViewingStatus selectedStatus = statusComboBox.getValue();

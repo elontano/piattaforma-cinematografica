@@ -58,9 +58,6 @@ public class FilmView {
 
         root.setTop(toolBar.getView());
         root.setCenter(filmTable.getView());
-
-        //stile CSS
-        applyStyles();
     }
 
     public void setFilmData(ObservableList<Film> films){
@@ -84,19 +81,5 @@ public class FilmView {
     public void setOnAddAction(Runnable action) { this.onAddAction = action; }
     public void setOnEditAction(Consumer<Film> action) { this.onEditAction = action; }
     public void setOnDeleteAction(Consumer<Film> action) { this.onDeleteAction = action; }
-
-    private void applyStyles() {
-        root.setStyle("-fx-background-color: #1e1e1e;");
-        String tableStyle =
-                ".table-view { -fx-background-color: transparent; }" +
-                        ".table-view .column-header-background { -fx-background-color: transparent; }" +
-                        ".table-view .column-header { -fx-background-color: #2d2d2d; }" +
-                        ".table-view .column-header .label { -fx-text-fill: white; }" +
-                        ".table-row-cell { -fx-background-color: #1e1e1e; -fx-text-fill: white; }" +
-                        ".table-row-cell:hover { -fx-background-color: #333333; }" +
-                        ".table-cell { -fx-text-fill: white; -fx-alignment: CENTER-LEFT; }";
-
-        root.getStylesheets().add("data:text/css," + tableStyle.replace(" ", "%20"));
-    }
 
 }
