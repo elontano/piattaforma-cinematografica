@@ -61,6 +61,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
         return new Film.Builder(film.getTitle())
                 .id(id)
+                .userId(film.getUserId())
                 .director(film.getDirector())
                 .yearOfRelease(film.getYearOfRelease())
                 .genre(film.getGenre())
@@ -141,25 +142,6 @@ public class FilmRepositoryImpl implements FilmRepository {
         return rowsAffected>0;
     }
 
-    @Override
-    public boolean exists(Integer ID) {
-        String query = Queries.EXISTS;
-        try(Connection connection = dbManager.getConnection();
-            PreparedStatement ps = connection.prepareStatement(query)){
-
-            ps.setInt(1,ID);
-
-            try (ResultSet rs = ps.executeQuery()){
-                if(rs.next()){
-                    return rs.getInt(1)>0;
-                }
-            }
-        }catch (SQLException e){
-            System.err.println("DB connection failed " + e.getMessage() );
-        }
-        return false;
-    }
-
     private Film extractFilm(ResultSet rs) throws SQLException {
         return new Film.Builder(rs.getString(TITLE))
                 .id(rs.getInt(ID))
@@ -180,7 +162,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     private void setIntOrNull(PreparedStatement ps, int index, Integer value) throws SQLException {
 
-        if (value == null)
+        if (value == null || value == 0)
             ps.setNull(index, Types.INTEGER);
         else ps.setInt(index, value);
     }

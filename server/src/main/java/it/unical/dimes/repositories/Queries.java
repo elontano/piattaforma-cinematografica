@@ -10,7 +10,7 @@ public class Queries {
     private static final String TABLE = "Film";
     //nomi colonne
     private static final String ID = "id";
-    private static final String USER_ID = "id";
+    private static final String USER_ID = "user_id";
     private static final String TITLE = "title";
     private static final String DIRECTOR = "director";
     private static final String YEAR = "year_of_release";
@@ -20,7 +20,7 @@ public class Queries {
 
     public static final String INSERT = "INSERT INTO " + TABLE +
             String.format("(%s, %s, %s, %s, %s, %s, %s)",USER_ID, TITLE, DIRECTOR, YEAR, GENRE, RATING, STATUS) +
-            " VALUES (?, ?, ?, ?, ?, ?)";
+            " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     public static final String UPDATE = "UPDATE " + TABLE + " SET "
             + String.format("%s=?, %s=?, %s=?, %s=?, %s=?, %s=? WHERE %s=? AND %s=?",

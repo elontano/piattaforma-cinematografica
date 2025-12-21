@@ -42,7 +42,7 @@ public class DBManager {
         String creaTabella = """
             CREATE TABLE IF NOT EXISTS Film (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                userId VARCHAR NOT NULL,
+                user_id VARCHAR(255) NOT NULL,
                 title VARCHAR(255) NOT NULL,
                 director VARCHAR(255),
                 year_of_release INT,
@@ -55,7 +55,7 @@ public class DBManager {
         try (Connection connection = getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute(creaTabella);
-            System.out.println("Tabella 'Film' creata/verificata con successo.");
+            System.out.println("'Film' table successfully created/verified.");
         } catch (SQLException e) {
             System.err.println("initDB error " + e.getMessage());
         }

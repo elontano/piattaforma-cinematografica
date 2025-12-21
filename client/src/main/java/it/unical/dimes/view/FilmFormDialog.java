@@ -10,7 +10,7 @@ import javafx.scene.layout.GridPane;
 import java.util.Optional;
 
 public class FilmFormDialog {
-    private Dialog<Film> filmDialog;
+    private final Dialog<Film> filmDialog;
 
     private final TextField titleField = new TextField();
     private final TextField directorField = new TextField();
@@ -52,11 +52,11 @@ public class FilmFormDialog {
 
     private void setTitleAndHeader(Film filmToEdit){
         if(filmToEdit == null){
-            filmDialog.setTitle("Nuovo Film");
-            filmDialog.setHeaderText("Inserisci i dettagli del nuovo film");
+            filmDialog.setTitle("New Film");
+            filmDialog.setHeaderText("Enter the details of the new film");
         }else {
-            filmDialog.setTitle("Modifica film");
-            filmDialog.setHeaderText("Modifica i dettagli del film");
+            filmDialog.setTitle("Edit Film");
+            filmDialog.setHeaderText("Edit movie details");
         }
     }
 
@@ -122,7 +122,7 @@ public class FilmFormDialog {
                 year = Integer.parseInt(yearText);
             }
         } catch (NumberFormatException e) {
-            System.err.println("Anno non valido, impostato a 0");
+            System.err.println("Invalid year, set to 0");
             year = 0;
         }
         film.yearOfRelease(year);

@@ -1,6 +1,5 @@
 package it.unical.dimes.command;
 
-
 import it.unical.dimes.model.Film;
 import it.unical.dimes.service.FilmServiceClient;
 import javafx.application.Platform;
@@ -21,10 +20,8 @@ public class EditCommand implements Command{
 
     @Override
     public void execute() {
-
         new Thread(() -> {
             try {
-
                 client.update(film,userId);
 
                 Platform.runLater(() -> {
@@ -37,6 +34,5 @@ public class EditCommand implements Command{
                 Platform.runLater(() -> System.err.println("Errore durante il salvataggio: " + e.getMessage()));
             }
         }).start();
-
     }
 }

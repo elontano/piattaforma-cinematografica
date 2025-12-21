@@ -6,6 +6,8 @@
     -fx-color-danger:  #d32f2f;
     -fx-color-neutral: #e0e0e0;
     -fx-bg-dark:       #1e1e1e;
+
+    -fx-background-color: -fx-bg-dark;
 }
 
 .button {
@@ -55,4 +57,49 @@
     -fx-border-color: #555555;
     -fx-background-radius: 30;
     -fx-cursor: hand
+}
+
+/* --- NUOVI STILI PER LA TABELLA --- */
+
+.table-view {
+    -fx-background-color: transparent;
+    /* Rimuove il bordo predefinito grigio/focoso se non lo vuoi */
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header {
+    /* Nota: Questo #2d2d2d è uguale a quello che usi nella .tool-bar */
+    -fx-background-color: #2d2d2d;
+    -fx-size: 35px; /* Opzionale: altezza header */
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    /* Qui usiamo la TUA variabile invece di scrivere #1e1e1e */
+    -fx-background-color: -fx-bg-dark;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #333333; /* O definisci una variabile -fx-bg-hover */
+}
+
+/* Gestione delle righe pari/dispari (opzionale, per togliere l'alternanza default) */
+.table-row-cell:odd {
+    -fx-background-color: -fx-bg-dark;
+}
+
+.table-cell {
+    -fx-text-fill: white;
+    -fx-alignment: CENTER-LEFT;
+    -fx-border-color: transparent;
 }

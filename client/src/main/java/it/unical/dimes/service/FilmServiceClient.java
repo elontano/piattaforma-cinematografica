@@ -5,7 +5,6 @@ import io.grpc.ManagedChannelBuilder;
 import it.unical.dimes.model.Film;
 import it.unical.dimes.model.FilmFilter;
 import it.unical.dimes.model.SortBy;
-import it.unical.dimes.model.ViewingStatus;
 import it.unical.dimes.mapper.FilmMapper;
 import it.unical.dimes.mapper.SortByMapper;
 import it.unical.dimes.mapper.ViewingStatusMapper;

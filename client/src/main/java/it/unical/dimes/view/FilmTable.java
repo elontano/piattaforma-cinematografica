@@ -73,14 +73,14 @@ public class FilmTable {
         colAction.setSortable(false);
 
         colAction.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("✎");
-            private final Button btnDelete = new Button("🗑");
+            private final Button btnEdit = new Button("✎Edit");
+            private final Button btnDelete = new Button("🗑Delete");
 
             private final HBox pane = new HBox(10, btnEdit, btnDelete);
 
             {
-                btnEdit.setTooltip(new Tooltip("Edit"));
-                btnDelete.setTooltip(new Tooltip("Delete"));
+//                btnEdit.setTooltip(new Tooltip("Edit"));
+//                btnDelete.setTooltip(new Tooltip("Delete"));
                 pane.setAlignment(Pos.CENTER);
                 btnEdit.getStyleClass().add("btn-edit");
                 btnDelete.getStyleClass().add("btn-delete");
@@ -112,6 +112,7 @@ public class FilmTable {
     public void setItems(ObservableList<Film> films) {
         tableView.setItems(films);
     }
+
     public ObservableList<Film> getItems(){return tableView.getItems();}
 
     public void refresh(){
