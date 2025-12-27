@@ -1,4 +1,4 @@
-package it.unical.dimes.repository;
+package it.unical.dimes.repositories;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
@@ -28,7 +28,7 @@ public class DBManager {
         }
     }
 
-    public static DBManager getInstance(){
+    public static synchronized DBManager getInstance(){
         if(instance == null)
             instance = new DBManager();
         return instance;
@@ -39,22 +39,34 @@ public class DBManager {
     }
 
     public void initDB(){
-        String creaTabella = """
+
+        String createTableUsers = """
+                CREATE TABLE IF NOT EXISTS Users (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL UNIQUE
+                );
+            """;
+
+        String createTableFilm = """
             CREATE TABLE IF NOT EXISTS Film (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id VARCHAR(255) NOT NULL,
+                user_id INT NOT NULL,
                 title VARCHAR(255) NOT NULL,
                 director VARCHAR(255),
                 year_of_release INT,
                 genre VARCHAR(100),
                 rating INT,
-                viewing_status VARCHAR(50)
+                viewing_status VARCHAR(50),
+                FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
             );
         """;
+        //ON DELETE CASCADE: se elimino l'utente elimino i suoi film
 
         try (Connection connection = getConnection();
              Statement statement = connection.createStatement()) {
-            statement.execute(creaTabella);
+            statement.execute(createTableUsers);
+            System.out.println("'Users' table verified.");
+            statement.execute(createTableFilm);
             System.out.println("'Film' table successfully created/verified.");
         } catch (SQLException e) {
             System.err.println("initDB error " + e.getMessage());
