@@ -24,96 +24,105 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
     }
 
     @Override
-    public void create(FilmDTO request, StreamObserver<FilmDTO> responseObserver) {
-        Film film = FilmMapper.fromGrpc(request);
-        String userId = request.getUserId();
+    public void create(CreateFilmRequest request, StreamObserver<FilmDTO> responseObserver) {
+
+        Film film = FilmMapper.fromCreateRequest(request);
+
+        int userId = request.getUserId();
 
         FilmDTO response;
         try {
-            Film saved = filmService.save(film,userId);
-            response = FilmMapper.toGrpc(saved);
+            //restituisce il Film con l'ID generato
+            Film savedFilm = filmService.save(film,userId);
+
+            response = FilmMapper.toGrpc(savedFilm);
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
         }catch (CatalogException e){
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
-            return;
         }catch (Exception e){
-           responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
-           return;
+           responseObserver.onError(Status.INTERNAL.withDescription("server error ")
+                   .asRuntimeException());
         }
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
     public void searchFilms(SearchFilmRequest request, StreamObserver<FilmListResponse> responseObserver) {
-        String userId = request.getUserId();
-        FilmFilter filter = mapToFilter(request);
-        List<Film> listFilm = filmService.search(filter,userId);
-        System.out.println("Trovati "+listFilm.size()+" film");
-        FilmListResponse.Builder responseBuilder = FilmListResponse.newBuilder();
+        int userId = request.getUserId();
+        try {
+            FilmFilter filter = mapToFilter(request);
+            List<Film> listFilm = filmService.search(filter,userId);
+//            System.out.println("Trovati "+listFilm.size()+" film");
+            FilmListResponse.Builder responseBuilder = FilmListResponse.newBuilder();
 
-        for(Film film : listFilm){
-            FilmDTO filmDTO = FilmMapper.toGrpc(film);
-            responseBuilder.addFilmList(filmDTO);
+            for(Film film : listFilm){
+                FilmDTO filmDTO = FilmMapper.toGrpc(film);
+                responseBuilder.addFilmList(filmDTO);
+            }
+
+            responseObserver.onNext(responseBuilder.build());
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL.withDescription("Error during search operation")
+                    .asRuntimeException());
         }
-
-        responseObserver.onNext(responseBuilder.build());
-        responseObserver.onCompleted();
     }
 
     @Override
     public void update(FilmDTO request, StreamObserver<OperationResponse> responseObserver) {
+
         Film film = FilmMapper.fromGrpc(request);
-        String userId = request.getUserId();
-        OperationResponse response;
+        int userId = request.getUserId();
+
         try {
             filmService.update(film,userId);
 
-            response = OperationResponse.newBuilder()
+            OperationResponse response = OperationResponse.newBuilder()
                     .setValid(true)
                     .setMessage(film.getTitle()+" updated")
                     .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
         }catch (FilmNotFoundException e){
             responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
-            return;
-
         }catch (ValidationException e) {
             responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
-            return;
         } catch (Exception e){
             responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
-            return;
-
         }
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
     public void delete(FilmIdRequest request, StreamObserver<OperationResponse> responseObserver) {
-        Integer id = request.getId();
-        String userId = request.getUserId();
-        OperationResponse response;
+        int id = request.getId();
+        int userId = request.getUserId();
+
         try {
             filmService.delete(id,userId);
 
-            response = OperationResponse.newBuilder()
+            OperationResponse response = OperationResponse.newBuilder()
                     .setValid(true)
                     .setMessage("film with id: "+id+" deleted")
                     .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+
         }catch (FilmNotFoundException e){
             responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
-            return;
         }catch (Exception e){
             responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
-            return;
         }
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     private FilmFilter mapToFilter(SearchFilmRequest request){
         FilmFilter.Builder builder = new FilmFilter.Builder();
+
         if(request.hasTitle()) {
             builder.title(request.getTitle());
         }
@@ -136,4 +145,5 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
         }
         return builder.build();
     }
+
 }

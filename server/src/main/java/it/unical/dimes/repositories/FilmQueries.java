@@ -1,4 +1,4 @@
-package it.unical.dimes.repository;
+package it.unical.dimes.repositories;
 
 import it.unical.dimes.entities.FilmFilter;
 import it.unical.dimes.entities.SortBy;
@@ -6,7 +6,7 @@ import it.unical.dimes.entities.ViewingStatus;
 
 import java.util.List;
 
-public class Queries {
+public class FilmQueries {
     private static final String TABLE = "Film";
     //nomi colonne
     private static final String ID = "id";
@@ -30,7 +30,7 @@ public class Queries {
 
     public static final String EXISTS = "SELECT COUNT(*) FROM " + TABLE + " WHERE " + ID + " = ? AND " + USER_ID + " = ?";
 
-    public static String buildSearchQuery(FilmFilter filter, String useriD, List<Object> params){
+    public static String buildSearchQuery(FilmFilter filter, int useriD, List<Object> params){
         StringBuilder query = new StringBuilder("SELECT * FROM "+TABLE+" WHERE "+USER_ID+" = ?");
 
         params.add(useriD);

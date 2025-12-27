@@ -1,4 +1,4 @@
-package it.unical.dimes.repository;
+package it.unical.dimes.repositories;
 
 import it.unical.dimes.entities.Film;
 import it.unical.dimes.entities.FilmFilter;
@@ -11,6 +11,7 @@ import java.util.List;
 public class FilmRepositoryImpl implements FilmRepository {
     //column names
     private static final String ID = "id";
+    private static final String USER_ID = "user_id";
     private static final String TITLE = "title";
     private static final String DIRECTOR = "director";
     private static final String YEAR = "year_of_release";
@@ -24,15 +25,16 @@ public class FilmRepositoryImpl implements FilmRepository {
         this.dbManager = dbManager;
     }
 
-
-    public Film save(Film film,String userID) {
+    public Film save(Film film,int userID) {
         //Film : ID,TITLE,DIRECTOR,YEAR,GENRE,RATIN,VS;
-        String query = Queries.INSERT;
+        String query = FilmQueries.INSERT;
         int id = -1;
         try (Connection connection = dbManager.getConnection();
              PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setString(1,userID);
+            //foreign key
+            ps.setInt(1,userID);
+            //dati film
             ps.setString(2, film.getTitle());
             setStringOrNull(ps, 3, film.getDirector());
             setIntOrNull(ps, 4, film.getYearOfRelease());
@@ -58,7 +60,6 @@ public class FilmRepositoryImpl implements FilmRepository {
             throw new RuntimeException("DB error during save..", e);
         }
 
-
         return new Film.Builder(film.getTitle())
                 .id(id)
                 .userId(film.getUserId())
@@ -71,11 +72,11 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
-    public List<Film> search(FilmFilter filter, String userId) {
+    public List<Film> search(FilmFilter filter, int userId) {
 
         //verrà popolato da buildSearchQuery
         List<Object> params = new ArrayList<>();
-        String query = Queries.buildSearchQuery(filter,userId,params);
+        String query = FilmQueries.buildSearchQuery(filter,userId,params);
 
         List<Film> listFilm = new ArrayList<>();
 
@@ -92,17 +93,17 @@ public class FilmRepositoryImpl implements FilmRepository {
                 }
             }
         }catch (SQLException e){
-            System.err.println("DB connection failed"+e.getMessage());
-            throw new RuntimeException("Errore durante la ricerca nel DB", e);
+            throw new RuntimeException("Error during search in DB", e);
         }
         return listFilm;
     }
 
     @Override
-    public boolean update(Film film,String userId) {
+    public boolean update(Film film,int userId) {
         //Film: ID,TITLE,DIRECTOR,YEAR,GENRE,RATING,VS;
-        String query = Queries.UPDATE;
+        String query = FilmQueries.UPDATE;
         int rowsAffected = 0;
+
         try (Connection connection = dbManager.getConnection();
             PreparedStatement ps = connection.prepareStatement(query)){
 
@@ -116,9 +117,10 @@ public class FilmRepositoryImpl implements FilmRepository {
             //WHERE Film ID = ?
             ps.setInt(7,film.getId());
             //WHERE User ID = ?
-            ps.setString(8,userId);
+            ps.setInt(8,userId);
 
             rowsAffected = ps.executeUpdate();
+
         }catch (SQLException e ){
             throw new RuntimeException("DB error during update");
         }
@@ -126,14 +128,14 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
-    public boolean delete(Integer ID, String userId) {
-        String query = Queries.DELETE;
+    public boolean delete(Integer ID, int userId) {
+        String query = FilmQueries.DELETE;
         int rowsAffected = 0;
         try(Connection connection = dbManager.getConnection();
             PreparedStatement ps = connection.prepareStatement(query)){
 
             ps.setInt(1,ID);
-            ps.setString(2,userId);
+            ps.setInt(2,userId);
 
             rowsAffected = ps.executeUpdate();
         }catch (SQLException e){
