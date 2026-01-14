@@ -15,9 +15,9 @@ public class SearchCommand implements Command {
     private FilmView view;
     private FilmServiceClient client;
     private FilmFilter filter;
-    private String userId;
+    private Integer userId;
 
-    public SearchCommand(FilmView view, FilmServiceClient client, FilmFilter filter, String userId) {
+    public SearchCommand(FilmView view, FilmServiceClient client, FilmFilter filter, Integer userId) {
         this.view = view;
         this.client = client;
         this.filter = filter;

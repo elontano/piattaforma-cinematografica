@@ -22,7 +22,6 @@ public class FilmFilter {
         private SortBy sortBy = SortBy.NONE;
         private boolean sortDirection = true; //true ascen //false
 
-
         public Builder title(String title){
             this.title=title;
             return this;

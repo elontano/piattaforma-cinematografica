@@ -14,9 +14,9 @@ import javafx.scene.control.ButtonType;
 public class FilmController {
     private final FilmView view;
     private final FilmServiceClient client;
-    private final String userId;
+    private final int userId;
 
-    public FilmController(FilmView view, FilmServiceClient client, String userId) {
+    public FilmController(FilmView view, FilmServiceClient client, int userId) {
         this.view = view;
         this.client = client;
         this.userId = userId;

@@ -32,20 +32,22 @@ public class FilmServiceClient {
         System.out.println("Canale chiuso ");
     }
 
-    public void createFilm(Film film,String userId){
+    public Film createFilm(Film film,Integer userId){
+
         FilmDTO.Builder requestBuilder = FilmMapper.toGrpc(film).toBuilder();
         requestBuilder.setUserId(userId);
-        FilmDTO response = blockingStub.create(requestBuilder.build());
 
+        FilmDTO response = blockingStub.create(FilmMapper.fromCreateFilmRequest(requestBuilder.build()));
+
+        return FilmMapper.fromGrpc(response);
     }
 
-    public List<Film> searchFilms(String userId){
+    public List<Film> searchFilms(Integer userId){
         return searchFilms(new FilmFilter.Builder().build(),userId);
     }
 
-    public List<Film> searchFilms(FilmFilter filter,String userId){
-        SearchFilmRequest searchFilmRequest = createFilmFilter(filter,userId);
-
+    public List<Film> searchFilms(FilmFilter filter,Integer userId){
+        SearchFilmRequest searchFilmRequest = createSearchRequest(filter,userId);
 
         FilmListResponse response = blockingStub.searchFilms(searchFilmRequest);
         List<FilmDTO> listDTOs = response.getFilmListList();
@@ -58,7 +60,7 @@ public class FilmServiceClient {
         return listFilm;
     }
 
-    public void update(Film film,String userId){
+    public void update(Film film,Integer userId){
         FilmDTO.Builder requestBuilder = FilmMapper.toGrpc(film).toBuilder();
         requestBuilder.setUserId(userId);
 
@@ -68,7 +70,7 @@ public class FilmServiceClient {
         System.out.println(response.getMessage());
     }
 
-    public void delete(Integer id,String userId){
+    public void delete(Integer id,Integer userId){
         FilmIdRequest filmIdRequest = FilmIdRequest.newBuilder()
                 .setId(id)
                 .setUserId(userId)
@@ -79,29 +81,29 @@ public class FilmServiceClient {
         System.out.println(response.getMessage());
     }
 
-    private SearchFilmRequest createFilmFilter(FilmFilter filter, String userId){
+    private SearchFilmRequest createSearchRequest(FilmFilter filter, Integer userId){
+        SearchFilmRequest.Builder builder = SearchFilmRequest.newBuilder();
+
+        builder.setUserId(userId);
+
         ViewingStatusDTO viewingStatusDTO = ViewingStatusMapper.toGrpc(filter.getViewingStatus());
         SortByDTO sortByDTO = SortByMapper.toGrpc(filter.getSortBy());
 
-        SearchFilmRequest.Builder searchFilmRequest = SearchFilmRequest.newBuilder();
 
         if(filter.getTitle() != null && !filter.getTitle().isEmpty())
-            searchFilmRequest.setTitle(filter.getTitle());
+            builder.setTitle(filter.getTitle());
         if(filter.getDirector() != null && !filter.getDirector().isEmpty())
-            searchFilmRequest.setDirector(filter.getDirector());
+            builder.setDirector(filter.getDirector());
         if(filter.getGenre() != null && !filter.getGenre().isEmpty())
-            searchFilmRequest.setGenre(filter.getGenre());
+            builder.setGenre(filter.getGenre());
         if(filter.getYearOfRelease()!=null && !(filter.getYearOfRelease()<1895))
-            searchFilmRequest.setYearOfRelease(filter.getYearOfRelease());
+            builder.setYearOfRelease(filter.getYearOfRelease());
         if(filter.getViewingStatus() != null )
-            searchFilmRequest.setViewingStatus(viewingStatusDTO);
+            builder.setViewingStatus(viewingStatusDTO);
         if(filter.getSortBy()!=null && !filter.getSortBy().equals(SortBy.NONE)) {
-            searchFilmRequest.setSortBy(sortByDTO);
-            searchFilmRequest.setSortAscending(filter.getSortDirection());
+            builder.setSortBy(sortByDTO);
+            builder.setSortAscending(filter.getSortDirection());
         }
-
-        searchFilmRequest.setUserId(userId);
-
-        return searchFilmRequest.build();
+        return builder.build();
     }
 }

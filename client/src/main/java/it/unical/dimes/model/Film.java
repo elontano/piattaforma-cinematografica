@@ -2,7 +2,7 @@ package it.unical.dimes.model;
 
 public class Film {
     private final Integer id;
-    private final String userId;
+    private final Integer userId;
     private final String title;
     private final String director ;
     private final String genre;
@@ -16,7 +16,7 @@ public class Film {
 
         //optional
         private Integer id = -1;
-        private String userId = "";
+        private Integer userId = -1;
         private String director = "";
         private String genre = "";
         private Integer yearOfRelease = 0;
@@ -32,7 +32,7 @@ public class Film {
             return this;
         }
 
-        public Builder userId(String userId){
+        public Builder userId(Integer userId){
             this.userId = userId;
             return this;
         }
@@ -78,7 +78,7 @@ public class Film {
         viewingStatus=builder.viewingStatus;
     }
 
-    public String getUserId(){return userId;}
+    public Integer getUserId(){return userId;}
 
     public String getDirector() {
         return director;
