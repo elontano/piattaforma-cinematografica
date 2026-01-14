@@ -21,20 +21,23 @@ public class UserRepositoryImpl implements UserRepository {
             ps.setString(1, username);
 
             try (ResultSet rs = ps.executeQuery()) {
+
                 if (rs.next()) {
                     int id = (rs.getInt("id"));
                     String userN = (rs.getString("username"));
                     return new User(id,userN);
                 }
+
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore ricerca utennte");
+            throw new RuntimeException("Errore SQL durante ricerca utente"+e.getMessage());
         }
         return null;
     }
 
     @Override
     public User save(User user) {
+        System.out.println("Salvo utente "+user.getUsername());
         String query = UserQueries.SAVE;
 
         try (Connection connection = dbManager.getConnection();
@@ -56,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Errore ricerca utenti");
+            throw new RuntimeException("Errore salvataggio "+e.getMessage());
         }
         return user;
     }

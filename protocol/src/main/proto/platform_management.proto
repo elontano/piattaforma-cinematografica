@@ -3,16 +3,32 @@ syntax = "proto3";
 option java_package = "it.unical.dimes.protocol";
 option java_multiple_files = true; //ci permette di creare per ogni message un file .java separato
 
+service UserService{
+  rpc Login(UserRequest) returns (UserResponse);
+}
+
 service CatalogService{
   rpc SearchFilms(SearchFilmRequest) returns (FilmListResponse);
-  rpc Create(FilmDTO) returns (FilmDTO);
+  rpc Create(CreateFilmRequest) returns (FilmDTO);
   rpc Update(FilmDTO) returns (OperationResponse);
   rpc Delete(FilmIdRequest) returns (OperationResponse);
 }
 
+message UserRequest{
+  string username = 1;
+  //password
+}
+
+message UserResponse{
+  int32 user_id = 1;
+  string username = 2;
+  bool success = 3;
+  string message = 4;
+}
+
 message FilmDTO{
-  uint32 id = 1; //in Create ignoro l'id che poi verra assegnato dal DB.
-  string user_id = 2;
+  int32 id = 1; //in Create ignoro l'id che poi verra assegnato dal DB.
+  int32 user_id = 2;
   string title = 3;
   string director = 4;
   string genre = 5;
@@ -21,9 +37,21 @@ message FilmDTO{
   ViewingStatusDTO viewing_status = 8;
 }
 
+
+message CreateFilmRequest{
+  int32 user_id = 1;
+  string title = 2;
+  string director = 3;
+  string genre = 4;
+  int32 year_of_release = 5;
+  int32 rating = 6;
+  ViewingStatusDTO viewing_status = 7;
+}
+
+
 message SearchFilmRequest{
   //Se sono vuoti i campi si ignorano
-  string userId = 1;
+  int32 userId = 1;
   optional string title = 2;
   optional string director = 3;
   optional string genre = 4;
@@ -58,6 +86,6 @@ message OperationResponse{
 }
 
 message FilmIdRequest{
-  uint32 id = 1;
-  string user_id = 2;
+  int32 id = 1;
+  int32 user_id = 2;
 }

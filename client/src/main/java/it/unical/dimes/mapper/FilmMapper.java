@@ -1,6 +1,7 @@
 package it.unical.dimes.mapper;
 
 import it.unical.dimes.model.Film;
+import it.unical.dimes.protocol.CreateFilmRequest;
 import it.unical.dimes.protocol.FilmDTO;
 
 public class FilmMapper {
@@ -39,5 +40,17 @@ public class FilmMapper {
         }
 
         return filmDTOBuilder.build();
+    }
+
+    public static CreateFilmRequest fromCreateFilmRequest(FilmDTO filmDTO){
+        return CreateFilmRequest.newBuilder()
+                .setDirector(filmDTO.getDirector())
+                .setGenre(filmDTO.getGenre())
+                .setRating(filmDTO.getRating())
+                .setTitle(filmDTO.getTitle())
+                .setUserId(filmDTO.getUserId())
+                .setViewingStatus(filmDTO.getViewingStatus())
+                .setYearOfRelease(filmDTO.getYearOfRelease())
+                .build();
     }
 }

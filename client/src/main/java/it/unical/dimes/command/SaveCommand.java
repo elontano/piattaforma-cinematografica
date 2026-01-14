@@ -8,10 +8,10 @@ public class SaveCommand implements Command{
 
     private final FilmServiceClient client;
     private final Film film;
-    private final String userId;
+    private final Integer userId;
     private final Runnable onSuccess; // Cosa fare dopo aver salvato (es. refresh)
 
-    public SaveCommand(FilmServiceClient client, Film film, String userId, Runnable onSuccess) {
+    public SaveCommand(FilmServiceClient client, Film film, Integer userId, Runnable onSuccess) {
         this.client = client;
         this.film = film;
         this.onSuccess = onSuccess;

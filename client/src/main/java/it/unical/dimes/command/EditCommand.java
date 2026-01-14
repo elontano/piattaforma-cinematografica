@@ -9,9 +9,9 @@ public class EditCommand implements Command{
     private final FilmServiceClient client;
     private final Film film;
     private final Runnable onSuccessCallback;
-    private final String userId;
+    private final Integer userId;
 
-    public EditCommand(FilmServiceClient client, Film film,String userId, Runnable onSuccessCallback) {
+    public EditCommand(FilmServiceClient client, Film film,Integer userId, Runnable onSuccessCallback) {
         this.client = client;
         this.film = film;
         this.onSuccessCallback = onSuccessCallback;

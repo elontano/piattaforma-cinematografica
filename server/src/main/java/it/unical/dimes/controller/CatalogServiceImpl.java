@@ -6,12 +6,10 @@ import it.unical.dimes.entities.Film;
 import it.unical.dimes.entities.FilmFilter;
 import it.unical.dimes.entities.SortBy;
 import it.unical.dimes.exception.CatalogException;
-import it.unical.dimes.exception.FilmNotFoundException;
-import it.unical.dimes.exception.ValidationException;
 import it.unical.dimes.mapper.FilmMapper;
 import it.unical.dimes.mapper.ViewingStatusMapper;
 import it.unical.dimes.protocol.*;
-import it.unical.dimes.service.FilmService;
+import it.unical.dimes.services.FilmService;
 
 import java.util.List;
 
@@ -19,32 +17,30 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
 
     private final FilmService filmService;
 
-    public CatalogServiceImpl(FilmService filmService){
-        this.filmService=filmService;
+    public CatalogServiceImpl(FilmService filmService) {
+        this.filmService = filmService;
     }
 
     @Override
     public void create(CreateFilmRequest request, StreamObserver<FilmDTO> responseObserver) {
 
         Film film = FilmMapper.fromCreateRequest(request);
-
         int userId = request.getUserId();
 
         FilmDTO response;
         try {
-            //restituisce il Film con l'ID generato
-            Film savedFilm = filmService.save(film,userId);
+            Film savedFilm = filmService.save(film, userId);
 
             response = FilmMapper.toGrpc(savedFilm);
 
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
-        }catch (CatalogException e){
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
-        }catch (Exception e){
-           responseObserver.onError(Status.INTERNAL.withDescription("server error ")
-                   .asRuntimeException());
+        } catch (CatalogException e) {
+            responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
+        } catch (Exception e) {
+            responseObserver.onError(Status.INTERNAL.withDescription("server error ")
+                    .asRuntimeException());
         }
     }
 
@@ -53,11 +49,11 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
         int userId = request.getUserId();
         try {
             FilmFilter filter = mapToFilter(request);
-            List<Film> listFilm = filmService.search(filter,userId);
+            List<Film> listFilm = filmService.search(filter, userId);
 //            System.out.println("Trovati "+listFilm.size()+" film");
             FilmListResponse.Builder responseBuilder = FilmListResponse.newBuilder();
 
-            for(Film film : listFilm){
+            for (Film film : listFilm) {
                 FilmDTO filmDTO = FilmMapper.toGrpc(film);
                 responseBuilder.addFilmList(filmDTO);
             }
@@ -78,21 +74,19 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
         int userId = request.getUserId();
 
         try {
-            filmService.update(film,userId);
+            filmService.update(film, userId);
 
             OperationResponse response = OperationResponse.newBuilder()
                     .setValid(true)
-                    .setMessage(film.getTitle()+" updated")
+                    .setMessage(film.getTitle() + " updated")
                     .build();
 
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
-        }catch (FilmNotFoundException e){
-            responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
-        }catch (ValidationException e) {
-            responseObserver.onError(Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
-        } catch (Exception e){
+        } catch (CatalogException e) {
+            responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
+        } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
         }
     }
@@ -103,27 +97,27 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
         int userId = request.getUserId();
 
         try {
-            filmService.delete(id,userId);
+            filmService.delete(id, userId);
 
             OperationResponse response = OperationResponse.newBuilder()
                     .setValid(true)
-                    .setMessage("film with id: "+id+" deleted")
+                    .setMessage("film with id: " + id + " deleted")
                     .build();
 
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
-        }catch (FilmNotFoundException e){
-            responseObserver.onError(Status.NOT_FOUND.withDescription(e.getMessage()).asRuntimeException());
-        }catch (Exception e){
+        } catch (CatalogException e) {
+            responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
+        } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
         }
     }
 
-    private FilmFilter mapToFilter(SearchFilmRequest request){
+    private FilmFilter mapToFilter(SearchFilmRequest request) {
         FilmFilter.Builder builder = new FilmFilter.Builder();
 
-        if(request.hasTitle()) {
+        if (request.hasTitle()) {
             builder.title(request.getTitle());
         }
         if (request.hasDirector()) {
@@ -135,7 +129,6 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
         if (request.hasYearOfRelease()) {
             builder.yearOfRelease(request.getYearOfRelease());
         }
-
         if (request.getViewingStatus() != ViewingStatusDTO.UNKNOWN_STATUS) {
             builder.viewingStatus(ViewingStatusMapper.fromGrpc(request.getViewingStatus()));
         }
@@ -143,6 +136,7 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
             builder.sortBy(SortBy.valueOf(request.getSortBy().name()));
             builder.sortDirection(request.getSortAscending());
         }
+
         return builder.build();
     }
 

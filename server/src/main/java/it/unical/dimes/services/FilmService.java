@@ -1,4 +1,4 @@
-package it.unical.dimes.service;
+package it.unical.dimes.services;
 
 import it.unical.dimes.entities.Film;
 import it.unical.dimes.entities.FilmFilter;
@@ -16,25 +16,25 @@ public class FilmService {
         this.filmRepository=filmRepository;
     }
 
-    public Film save(Film film, int userId){
+    public Film save(Film film, Integer userId){
         validateUser(userId);
         validateFilm(film);
         return filmRepository.save(film,userId);
     }
 
-    public List<Film> search(FilmFilter filter,int userId){
+    public List<Film> search(FilmFilter filter,Integer userId){
         validateUser(userId);
         return filmRepository.search(filter,userId);
     }
 
-    public void update(Film film, int userId){
+    public void update(Film film, Integer userId){
         validateUser(userId);
         validateFilm(film);
         if(!filmRepository.update(film,userId))
             throw new FilmNotFoundException(film.getTitle()+" not found to update");
     }
 
-    public void delete(Integer id, int userId){
+    public void delete(Integer id, Integer userId){
         validateUser(userId);
         if(!filmRepository.delete(id,userId))
             throw new FilmNotFoundException("Film with id "+id+"not found");
