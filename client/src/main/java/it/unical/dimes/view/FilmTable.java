@@ -1,4 +1,5 @@
 package it.unical.dimes.view;
+import it.unical.dimes.factory.ButtonType;
 import it.unical.dimes.model.ViewingStatus;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,16 +17,21 @@ import java.util.function.Consumer;
 
 public class FilmTable {
     private final TableView<Film> tableView;
-    private UIFactory uiFactory;
+    private final UIFactory uiFactory;
 
     // Event Handlers
     private Consumer<Film> onEditAction;
     private Consumer<Film> onDeleteAction;
 
     public FilmTable (UIFactory factory){
-        uiFactory = factory;
-        tableView = new TableView<>();
+        this.uiFactory = factory;
+        this.tableView = new TableView<>();
+
+        //rende colonne larghe quanto basta per riempire la tabella
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        tableView.setPlaceholder(new Label("Nessun film presente!"));
+
         initLayout();
     }
 
@@ -34,26 +40,31 @@ public class FilmTable {
     }
 
     private void createColumns(){
+        // TITOLO
         TableColumn<Film, String> colTitle = new TableColumn<>("Title");
         colTitle.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTitle()));
 
+        // REGISTA
         TableColumn<Film, String> colDirector = new TableColumn<>("Director");
         colDirector.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDirector()));
 
+        // ANNO
         TableColumn<Film, String> colYear = new TableColumn<>("Year");
         colYear.setCellValueFactory(cell ->
                 new SimpleStringProperty(String.valueOf(
                         (cell.getValue().getYearOfRelease()==0) ? "" : cell.getValue().getYearOfRelease()
                 )));
 
+        // RATING
         TableColumn<Film, Integer> colRating = new TableColumn<>("Rating");
         colRating.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getRating()));
         colRating.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(Integer rating, boolean empty) {
                 super.updateItem(rating, empty);
-                if (empty || rating == null) {
+                if (empty || rating == null || rating == 0) {
                     setGraphic(null);
+                    setText(null);
                 } else {
                     String stars = "★".repeat(Math.max(0, rating)) + "☆".repeat(Math.max(0, 5 - rating));
                     Text text = new Text(stars);
@@ -65,6 +76,7 @@ public class FilmTable {
             }
         });
 
+        //STATUS
         TableColumn<Film, ViewingStatus> colStatus = new TableColumn<>("Status");
         colStatus.setCellValueFactory(cell -> new SimpleObjectProperty<>(cell.getValue().getViewingStatus()));
 
@@ -73,25 +85,23 @@ public class FilmTable {
         colAction.setSortable(false);
 
         colAction.setCellFactory(param -> new TableCell<>() {
-            private final Button btnEdit = new Button("✎Edit");
-            private final Button btnDelete = new Button("🗑Delete");
+            // Usiamo la factory passando stringa vuota "" per avere solo le icone
+            private final Button btnEdit = uiFactory.createButton("", ButtonType.EDIT, e -> {
+                Film film = getTableView().getItems().get(getIndex());
+                if (onEditAction != null) onEditAction.accept(film);
+            });
+
+            private final Button btnDelete = uiFactory.createButton("", ButtonType.DELETE, e -> {
+                Film film = getTableView().getItems().get(getIndex());
+                if (onDeleteAction != null) onDeleteAction.accept(film);
+            });
+
 
             private final HBox pane = new HBox(10, btnEdit, btnDelete);
 
             {
-//                btnEdit.setTooltip(new Tooltip("Edit"));
-//                btnDelete.setTooltip(new Tooltip("Delete"));
                 pane.setAlignment(Pos.CENTER);
-                btnEdit.getStyleClass().add("btn-edit");
-                btnDelete.getStyleClass().add("btn-delete");
-
-                btnEdit.setOnAction(e -> {
-                    if (onEditAction != null) onEditAction.accept(getTableView().getItems().get(getIndex()));
-                });
-
-                btnDelete.setOnAction(e -> {
-                    if (onDeleteAction != null) onDeleteAction.accept(getTableView().getItems().get(getIndex()));
-                });
+                //aggiungere edit o delete in testo se necessario
             }
 
             @Override

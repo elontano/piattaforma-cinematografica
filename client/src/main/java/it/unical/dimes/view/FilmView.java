@@ -4,6 +4,7 @@ import it.unical.dimes.factory.UIFactory;
 import it.unical.dimes.model.Film;
 import it.unical.dimes.model.FilmFilter;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 
@@ -30,8 +31,13 @@ public class FilmView {
         return root;
     }
 
+    public UIFactory getUiFactory(){
+        return uiFactory;
+    }
+
     private void initView() {
         root = new BorderPane();
+        root.setPadding(new Insets(15));
 
         ToolBar toolBar = new ToolBar(uiFactory);
         filmTable = new FilmTable(uiFactory);

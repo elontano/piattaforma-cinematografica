@@ -2,9 +2,12 @@ package it.unical.dimes.repositories;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 public class DBManager {
 
@@ -13,15 +16,29 @@ public class DBManager {
 
     private DBManager(){
         ds = new MysqlDataSource();
-        try {
-            ds.setServerName("127.0.0.1");
-            ds.setPort(3306);
-            ds.setUser("root");
-            ds.setPassword("elontano");
-            ds.setDatabaseName("piattaforma_cinematografica");
+
+        Properties props = new Properties();
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")){
+            if(inputStream == null){
+                System.err.println("Impossibile trovare config.properties");
+                return;
+            }
+            props.load(inputStream);
+
+            ds.setServerName(props.getProperty("server.name"));
+            ds.setPort(Integer.parseInt(props.getProperty("port.number")));
+            ds.setUser(props.getProperty("db.user"));
+            ds.setPassword(props.getProperty("db.password"));
+            ds.setDatabaseName(props.getProperty("db.name"));
 
             ds.setUseSSL(false);
             ds.setAllowPublicKeyRetrieval(true);
+            ds.setServerTimezone("UTC");
+
+
+        }catch (IOException e){
+            e.printStackTrace();
         }catch (SQLException e){
             System.err.println("Errore configurazione Data Source "+e.getMessage());
             e.printStackTrace();
@@ -61,6 +78,7 @@ public class DBManager {
             );
         """;
         //ON DELETE CASCADE: se elimino l'utente elimino i suoi film
+
 
         try (Connection connection = getConnection();
              Statement statement = connection.createStatement()) {

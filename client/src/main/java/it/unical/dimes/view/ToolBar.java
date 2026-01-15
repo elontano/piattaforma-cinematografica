@@ -1,22 +1,20 @@
 package it.unical.dimes.view;
 
+import atlantafx.base.theme.Styles;
 import it.unical.dimes.factory.ButtonType;
 import it.unical.dimes.factory.UIFactory;
 import it.unical.dimes.model.FilmFilter;
 import it.unical.dimes.model.SortBy;
 import it.unical.dimes.model.ViewingStatus;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.function.Consumer;
 
@@ -71,48 +69,55 @@ public class ToolBar {
         );
     }
 
-    private void createFields(){
-        titleField = uiFactory.createTextField("Title...",130);
-        directorField = uiFactory.createTextField("Director...",130);
-        genreField = uiFactory.createTextField("Genre...",100);
-        yearField = uiFactory.createTextField("Year...",80);
+    private void createFields() {
+        titleField = uiFactory.createTextField("Title...", 130);
+        directorField = uiFactory.createTextField("Director...", 130);
+        genreField = uiFactory.createTextField("Genre...", 100);
+        yearField = uiFactory.createTextField("Year...", 80);
 
-        //Provvisorio per NON vedere UNKNOWN STATUS nella toolbar
+        // Gestione status per evitare UNKNOWN
         ViewingStatus[] vs = ViewingStatus.values();
-        ViewingStatus[] newVS = new ViewingStatus[vs.length-1];
-        for(int i=1;i<vs.length;i++){
-            newVS[i-1]=vs[i];
-        }
+        ViewingStatus[] newVS = new ViewingStatus[vs.length - 1];
+        System.arraycopy(vs, 1, newVS, 0, vs.length - 1);
 
-        statusComboBox = uiFactory.createComboBox("Status",newVS);
+        statusComboBox = uiFactory.createComboBox("Status", newVS);
         statusComboBox.setPrefWidth(100);
-        sortByComboBox = uiFactory.createComboBox("Sort by",SortBy.values());
 
-        sortDirectionToggle = uiFactory.createToggleButton("⬆",70);
-        sortDirectionToggle.setSelected(true);
+        sortByComboBox = uiFactory.createComboBox("Sort by", SortBy.values());
 
-        sortDirectionToggle.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if(sortDirectionToggle.isSelected()){
-                    sortDirectionToggle.setText("⬆");
-                }else {
-                    sortDirectionToggle.setText("⬇");
-                }
+        // Creiamo il toggle button tramite factory (testo vuoto perché usiamo l'icona)
+        sortDirectionToggle = uiFactory.createToggleButton("", 40);
+
+        // Stile: lo rendiamo un pulsante icona (quadrato/compatto)
+        sortDirectionToggle.getStyleClass().add(Styles.BUTTON_ICON);
+
+        // Icona iniziale (es. A-Z, ordinamento discendente standard)
+        sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_DOWN));
+        sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Crescente (A-Z)"));
+        sortDirectionToggle.setSelected(false); // Default: non selezionato
+
+        // Logica al click: cambio icona
+        sortDirectionToggle.setOnAction(e -> {
+            if (sortDirectionToggle.isSelected()) {
+                // Se selezionato -> Z-A (Decrescente)
+                sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_UP));
+                sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Decrescente (Z-A)"));
+            } else {
+                // Se non selezionato -> A-Z (Crescente)
+                sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_DOWN));
+                sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Crescente (A-Z)"));
             }
         });
     }
 
     private void createButtons(){
-
-        searchButton = uiFactory.createButton("🔍Search ", ButtonType.SEARCH, e->{
-            if(onSearchAction!=null) {
+        searchButton = uiFactory.createButton("Cerca", ButtonType.SEARCH, e -> {
+            if(onSearchAction != null) {
                 onSearchAction.accept(buildFilterFromFields());
-                System.out.println(buildFilterFromFields());
             }
         });
 
-        addButton = uiFactory.createButton("+New",ButtonType.NEW,e->{
+        addButton = uiFactory.createButton("Nuovo", ButtonType.NEW, e -> {
             if(onAddAction != null)
                 onAddAction.run();
         });

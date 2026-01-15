@@ -38,7 +38,7 @@ public class FilmController {
     }
 
     private void handleAdd() {
-        FilmFormDialog dialog = new FilmFormDialog(null);
+        FilmFormDialog dialog = new FilmFormDialog(null,view.getUiFactory());
 
         dialog.showAndWait().ifPresent(newFilm -> {
             new SaveCommand(client, newFilm, userId, () -> {
@@ -48,7 +48,7 @@ public class FilmController {
     }
 
     private void handleEdit(Film film) {
-        FilmFormDialog dialog = new FilmFormDialog(film);
+        FilmFormDialog dialog = new FilmFormDialog(film,view.getUiFactory());
         dialog.showAndWait().ifPresent(updatedFilm -> {
 
             Runnable onSuccess = () -> {
@@ -64,6 +64,7 @@ public class FilmController {
 
     private void handleDelete(Film film) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Remove " + film.getTitle() + "?");
+
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 new DeleteCommand(client, film.getId(), userId,this::refreshData).execute();

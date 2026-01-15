@@ -1,36 +1,45 @@
 package it.unical.dimes.view;
 
+import atlantafx.base.theme.Styles;
+import it.unical.dimes.factory.UIFactory;
 import it.unical.dimes.model.Film;
 import it.unical.dimes.model.ViewingStatus;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Optional;
 
 public class FilmFormDialog {
     private final Dialog<Film> filmDialog;
+    private final UIFactory uiFactory;
 
-    private final TextField titleField = new TextField();
-    private final TextField directorField = new TextField();
-    private final TextField genreField = new TextField();
-    private final TextField yearField = new TextField();
-    private final Spinner<Integer> ratingSpinner = new Spinner<>(0, 5, 0);
-    private final ComboBox<ViewingStatus> statusComboBox = new ComboBox<>();
+    private TextField titleField ;
+    private TextField directorField ;
+    private TextField genreField;
+    private TextField yearField;
+    private Spinner<Integer> ratingSpinner ;
+    private ComboBox<ViewingStatus> statusComboBox ;
 
     private final Film existingFilm;
 
-    public FilmFormDialog(Film filmToEdit) {
+    public FilmFormDialog(Film filmToEdit, UIFactory factory) {
         filmDialog = new Dialog<>();
         this.existingFilm = filmToEdit;
+        this.uiFactory = factory;
 
         setTitleAndHeader(filmToEdit);
+
+        initFields();
 
         ButtonType saveButtonType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
         filmDialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-        ratingSpinner.setEditable(true);
+        //sStilizziamo i pulsanti del Dialog (Icone + Colori)
+        styleDialogButtons(saveButtonType);
 
         GridPane grid = createGrid();
         filmDialog.getDialogPane().setContent(grid);
@@ -50,6 +59,20 @@ public class FilmFormDialog {
         });
     }
 
+    private void initFields() {
+        // Usiamo la factory per coerenza grafica (es. bordi, font)
+        titleField = uiFactory.createTextField("Title", 0);
+        directorField = uiFactory.createTextField("Director", 0);
+        genreField = uiFactory.createTextField("Genre", 0);
+        yearField = uiFactory.createTextField("Year", 0);
+
+        statusComboBox = uiFactory.createComboBox("Status", ViewingStatus.values());
+
+        // Lo Spinner non è nella factory, lo lasciamo standard
+        ratingSpinner = new Spinner<>(0, 5, 0);
+        ratingSpinner.setEditable(true);
+    }
+
     private void setTitleAndHeader(Film filmToEdit){
         if(filmToEdit == null){
             filmDialog.setTitle("New Film");
@@ -57,6 +80,21 @@ public class FilmFormDialog {
         }else {
             filmDialog.setTitle("Edit Film");
             filmDialog.setHeaderText("Edit movie details");
+        }
+    }
+
+    private void styleDialogButtons(ButtonType saveButtonType) {
+        // Recuperiamo i nodi Button dal DialogPane per applicare gli stili
+        Button btnSave = (Button) filmDialog.getDialogPane().lookupButton(saveButtonType);
+        if (btnSave != null) {
+            btnSave.getStyleClass().add(Styles.SUCCESS); // Verde
+            btnSave.setGraphic(new FontIcon(FontAwesomeSolid.SAVE));
+        }
+
+        Button btnCancel = (Button) filmDialog.getDialogPane().lookupButton(ButtonType.CANCEL);
+        if (btnCancel != null) {
+            // Nessuno stile colore particolare, ma mettiamo l'icona
+            btnCancel.setGraphic(new FontIcon(FontAwesomeSolid.TIMES));
         }
     }
 
