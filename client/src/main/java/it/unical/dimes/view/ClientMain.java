@@ -1,5 +1,6 @@
 package it.unical.dimes.view;
 
+import atlantafx.base.theme.PrimerLight;
 import it.unical.dimes.controller.FilmController;
 import it.unical.dimes.factory.StandardUIFactory;
 import it.unical.dimes.factory.UIFactory;
@@ -25,6 +26,11 @@ public class ClientMain extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        //Applico il tema di AtlantaFX primer ligh
+        //usando setUserAgenStyleSheet il tema si applica anche ai vari dialogs
+        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+
         String username = getUsername();
 
         if(username == null || username.trim().isEmpty()){
@@ -33,8 +39,8 @@ public class ClientMain extends Application {
             return;
         }
 
+        //connessione
         UserServiceClient userServiceClient = new UserServiceClient(HOST,PORT);
-
         UserResponse userResponse = userServiceClient.login(username);
 
         if(userResponse == null){
@@ -48,16 +54,16 @@ public class ClientMain extends Application {
 
         userServiceClient.shutdown();
 
+        //configurazione
         UIFactory factory  = new StandardUIFactory();
         FilmView filmView = new FilmView(factory);
         FilmServiceClient filmServiceClient = new FilmServiceClient(HOST,PORT);
 
         FilmController controller = new FilmController(filmView,filmServiceClient,realUserID);
 
-        Scene scene = new Scene(filmView.getView(), 900, 600);
+        Scene scene = new Scene(filmView.getView(), 1000, 600);
         primaryStage.setTitle("Video Library of : "+realUsername);
         primaryStage.setScene(scene);
-        scene.getStylesheets().add(getClass().getResource("/standardStyle.css").toExternalForm());
 
         primaryStage.show();
     }
