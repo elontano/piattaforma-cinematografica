@@ -18,17 +18,41 @@ public class UserServiceClient {
         this.blockingStub = UserServiceGrpc.newBlockingStub(this.channel);
     }
 
-    public UserResponse login(String username) {
+    public UserResponse login(String username,String password) {
 
         UserRequest request = UserRequest.newBuilder()
                 .setUsername(username)
+                .setPassword(password)
                 .build();
 
         try {
             return blockingStub.login(request);
         } catch (Exception e) {
-            System.err.println("RPC aaa: " + e.getMessage());
-            return null;
+            System.err.println("Login error: " + e.getMessage());
+            e.printStackTrace();
+            return UserResponse.newBuilder()
+                    .setSuccess(false)
+                    .setMessage("Errore di comunicazione "+e.getMessage())
+                    .build();
+        }
+    }
+
+    public UserResponse register(String username, String password){
+
+        UserRequest request = UserRequest.newBuilder()
+                .setUsername(username)
+                .setPassword(password)
+                .build();
+
+        try {
+            return blockingStub.register(request);
+        }catch (Exception e ){
+            System.err.println("Registrazion error: "+e.getMessage());
+            e.printStackTrace();
+            return UserResponse.newBuilder()
+                    .setSuccess(false)
+                    .setMessage("Errore registrazione "+e.getMessage())
+                    .build();
         }
     }
 

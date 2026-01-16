@@ -63,7 +63,7 @@ public class FilmController {
     }
 
     private void handleDelete(Film film) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Remove " + film.getTitle() + "?");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Wanto to remove '" + film.getTitle() + "' ?");
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {

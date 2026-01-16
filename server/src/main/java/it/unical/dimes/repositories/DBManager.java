@@ -14,13 +14,13 @@ public class DBManager {
     private static DBManager instance = null;
     private final MysqlDataSource ds;
 
-    private DBManager(){
+    private DBManager() {
         ds = new MysqlDataSource();
 
         Properties props = new Properties();
 
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")){
-            if(inputStream == null){
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            if (inputStream == null) {
                 System.err.println("Impossibile trovare config.properties");
                 return;
             }
@@ -34,49 +34,47 @@ public class DBManager {
 
             ds.setUseSSL(false);
             ds.setAllowPublicKeyRetrieval(true);
-            ds.setServerTimezone("UTC");
-
-
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        }catch (SQLException e){
-            System.err.println("Errore configurazione Data Source "+e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("Errore configurazione Data Source " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public static synchronized DBManager getInstance(){
-        if(instance == null)
+    public static synchronized DBManager getInstance() {
+        if (instance == null)
             instance = new DBManager();
         return instance;
     }
 
-    public Connection getConnection() throws SQLException{
+    public Connection getConnection() throws SQLException {
         return ds.getConnection();
     }
 
-    public void initDB(){
+    public void initDB() {
 
         String createTableUsers = """
-                CREATE TABLE IF NOT EXISTS Users (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    username VARCHAR(255) NOT NULL UNIQUE
-                );
-            """;
+                    CREATE TABLE IF NOT EXISTS Users (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        username VARCHAR(255) NOT NULL UNIQUE,
+                        password VARCHAR(255) NOT NULL
+                    );
+                """;
 
         String createTableFilm = """
-            CREATE TABLE IF NOT EXISTS Film (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT NOT NULL,
-                title VARCHAR(255) NOT NULL,
-                director VARCHAR(255),
-                year_of_release INT,
-                genre VARCHAR(100),
-                rating INT,
-                viewing_status VARCHAR(50),
-                FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
-            );
-        """;
+                    CREATE TABLE IF NOT EXISTS Film (
+                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        user_id INT NOT NULL,
+                        title VARCHAR(255) NOT NULL,
+                        director VARCHAR(255),
+                        year_of_release INT,
+                        genre VARCHAR(100),
+                        rating INT,
+                        viewing_status VARCHAR(50),
+                        FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+                    );
+                """;
         //ON DELETE CASCADE: se elimino l'utente elimino i suoi film
 
 

@@ -1,91 +1,108 @@
 package it.unical.dimes.view;
 
 import atlantafx.base.theme.PrimerLight;
+import it.unical.dimes.command.Command;
+import it.unical.dimes.command.LoginCommand;
+import it.unical.dimes.command.RegisterCommand;
 import it.unical.dimes.controller.FilmController;
 import it.unical.dimes.factory.StandardUIFactory;
 import it.unical.dimes.factory.UIFactory;
+import it.unical.dimes.model.UserAuthentication;
 import it.unical.dimes.protocol.UserResponse;
 import it.unical.dimes.service.FilmServiceClient;
 import it.unical.dimes.service.UserServiceClient;
 import javafx.application.Application;
 
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
 
-import java.util.Optional;
+import java.awt.*;
+import java.util.function.Consumer;
 
 public class ClientMain extends Application {
-
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 50051;
+
+    private Stage primaryStage;
+    private UIFactory uiFactory;
+    private UserServiceClient userServiceClient;
 
     @Override
     public void start(Stage primaryStage) {
 
-        //Applico il tema di AtlantaFX primer ligh
-        //usando setUserAgenStyleSheet il tema si applica anche ai vari dialogs
+        Platform.setImplicitExit(false);
+
+        this.primaryStage = primaryStage;
+        this.uiFactory = new StandardUIFactory();
+
+        this.userServiceClient = new UserServiceClient(HOST,PORT);
+
+        //Applico il tema di AtlantaFX primer light e usando setUserAgenStyleSheet il tema si applica anche ai vari dialogs
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
-        String username = getUsername();
-
-        if(username == null || username.trim().isEmpty()){
-            System.out.println("No user selected.");
-            Platform.exit();
-            return;
-        }
-
-        //connessione
-        UserServiceClient userServiceClient = new UserServiceClient(HOST,PORT);
-        UserResponse userResponse = userServiceClient.login(username);
-
-        if(userResponse == null){
-            showError("Login failed","Could not connect to server");
-            Platform.exit();
-            return;
-        }
-
-        int realUserID = userResponse.getUserId();
-        String realUsername = userResponse.getUsername();
-
-        userServiceClient.shutdown();
-
-        //configurazione
-        UIFactory factory  = new StandardUIFactory();
-        FilmView filmView = new FilmView(factory);
-        FilmServiceClient filmServiceClient = new FilmServiceClient(HOST,PORT);
-
-        FilmController controller = new FilmController(filmView,filmServiceClient,realUserID);
-
-        Scene scene = new Scene(filmView.getView(), 1000, 600);
-        primaryStage.setTitle("Video Library of : "+realUsername);
-        primaryStage.setScene(scene);
-
-        primaryStage.show();
+        showAuthenticationDialog();
     }
 
-    private String getUsername() {
-        TextInputDialog dialog = new TextInputDialog(); // Valore di default per test rapidi
+    private void showAuthenticationDialog(){
+        LoginDialog loginDialog = new LoginDialog(uiFactory);
 
-        dialog.setTitle("Login ");
-        dialog.setHeaderText("Welcome to the Video Library");
-        dialog.setContentText("Enter your Username to continue:");
+        loginDialog.showAndWait().ifPresentOrElse(
+                // CASO 1: L'utente ha premuto Login o Register
+                authData -> handleAuthenticationRequest(authData),
 
-        Node loginButton = dialog.getDialogPane().lookupButton(ButtonType.OK);
+                // CASO 2: L'utente ha chiuso o annullato -> Chiudi tutto
+                () -> {
+                    userServiceClient.shutdown();
+                    Platform.exit();
+                }
+        );
+    }
 
-        loginButton.setDisable(true);
+    private void handleAuthenticationRequest(UserAuthentication user){
+        Consumer<UserResponse> onResult = (response)->{
+            if(response!=null && response.getSuccess()){
+                //avviamo l'applicazione
+                initApplication(response);
+            }else {
+                String msg = (response != null && response.getMessage() != null)
+                        ? response.getMessage() : "Credenziali non valide.";
+                showError("Errore Accesso",msg);
+                showAuthenticationDialog();
+            }
+        };
 
-        dialog.getEditor().textProperty().addListener((observableValue, oldValue, newValue) ->
-                loginButton.setDisable(newValue.trim().isEmpty()));
+        Command command;
+        if(user.isRegister()){
+            command = new RegisterCommand(userServiceClient,user.username(),user.password(),onResult);
+        }else {
+            command = new LoginCommand(userServiceClient,user.username(),user.password(),onResult);
+        }
 
-        Optional<String> result = dialog.showAndWait();
-        System.out.println(result);
+        command.execute();
+    }
 
-        return result.orElse(null);
+    private void initApplication(UserResponse user){
+        userServiceClient.shutdown();
+
+        //Configurazione dopo login
+        FilmView filmView = new FilmView(uiFactory);
+        FilmServiceClient filmServiceClient = new FilmServiceClient(HOST, PORT);
+
+        FilmController controller = new FilmController(filmView, filmServiceClient, user.getUserId());
+
+        Scene scene = new Scene(filmView.getView(), 1000, 600);
+        primaryStage.setTitle("Video Library of: " + user.getUsername());
+        primaryStage.setScene(scene);
+
+        primaryStage.setOnCloseRequest(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
+
+        primaryStage.show();
+
     }
 
     private void showError(String title, String content){
