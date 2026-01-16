@@ -1,6 +1,7 @@
 package it.unical.dimes.repositories;
 
 import it.unical.dimes.entities.User;
+import it.unical.dimes.exception.UserAlreadyExistsException;
 
 import java.sql.*;
 
@@ -23,14 +24,12 @@ public class UserRepositoryImpl implements UserRepository {
             try (ResultSet rs = ps.executeQuery()) {
 
                 if (rs.next()) {
-                    int id = (rs.getInt("id"));
-                    String userN = (rs.getString("username"));
-                    return new User(id,userN);
+                    User user = new User(rs.getInt("id"),rs.getString("username"), rs.getString("password"));
+                    return user;
                 }
-
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore SQL durante ricerca utente"+e.getMessage());
+            throw new RuntimeException("Errore DB durante ricerca utente"+e.getMessage());
         }
         return null;
     }
@@ -44,21 +43,26 @@ public class UserRepositoryImpl implements UserRepository {
              PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, user.getUsername());
+            ps.setString(2,user.getPassword());
 
             int affectedRows = ps.executeUpdate();
+
             if(affectedRows==0)
-                throw new SQLException("Creazione utente fallita");
+                throw new SQLException("Creazione utente fallita, nessuna riga modificata");
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     user.setId(keys.getInt(1));
                 }else {
-                    throw new SQLException("Creazione utente fallita");
+                    throw new SQLException("Creazione utente fallita, ID non ottenuto");
                 }
 
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            if(e.getErrorCode()==1062){
+                throw new UserAlreadyExistsException("L'utente "+user.getUsername()+" esiste già!");
+            }
+            //per tutti gli altri errori
             throw new RuntimeException("Errore salvataggio "+e.getMessage());
         }
         return user;

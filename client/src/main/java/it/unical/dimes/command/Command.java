@@ -1,5 +1,5 @@
 package it.unical.dimes.command;
 
-interface Command {
+public interface Command {
     void execute();
 }
