@@ -56,7 +56,6 @@ public class FilmRepositoryImpl implements FilmRepository {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("DB error during save..");
             throw new RuntimeException("DB error during save..", e);
         }
 
@@ -73,7 +72,6 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> search(FilmFilter filter, int userId) {
-
         //verrà popolato da buildSearchQuery
         List<Object> params = new ArrayList<>();
         String query = FilmQueries.buildSearchQuery(filter,userId,params);
@@ -122,7 +120,7 @@ public class FilmRepositoryImpl implements FilmRepository {
             rowsAffected = ps.executeUpdate();
 
         }catch (SQLException e ){
-            throw new RuntimeException("DB error during update");
+            throw new RuntimeException("DB error during update",e);
         }
         return rowsAffected>0;
     }
@@ -139,7 +137,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
             rowsAffected = ps.executeUpdate();
         }catch (SQLException e){
-            throw new RuntimeException("DB error during delete");
+            throw new RuntimeException("DB error during delete",e);
         }
         return rowsAffected>0;
     }
@@ -156,14 +154,12 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     private void setStringOrNull(PreparedStatement ps, int index, String value) throws SQLException {
-
         if (value == null || value.isEmpty())
             ps.setNull(index, Types.VARCHAR);
         else ps.setString(index, value);
     }
 
     private void setIntOrNull(PreparedStatement ps, int index, Integer value) throws SQLException {
-
         if (value == null || value == 0)
             ps.setNull(index, Types.INTEGER);
         else ps.setInt(index, value);

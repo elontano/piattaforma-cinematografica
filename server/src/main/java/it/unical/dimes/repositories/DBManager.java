@@ -10,19 +10,18 @@ import java.sql.Statement;
 import java.util.Properties;
 
 public class DBManager {
-
     private static DBManager instance = null;
     private final MysqlDataSource ds;
 
+    //TODO Connection Pool da implementare in futuro per aumentare scalabilità
+
     private DBManager() {
         ds = new MysqlDataSource();
-
         Properties props = new Properties();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
             if (inputStream == null) {
-                System.err.println("Impossibile trovare config.properties");
-                return;
+                throw new RuntimeException("File 'config.properties' not found!");
             }
             props.load(inputStream);
 
@@ -35,10 +34,9 @@ public class DBManager {
             ds.setUseSSL(false);
             ds.setAllowPublicKeyRetrieval(true);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Error loading database configuration", e);
         } catch (SQLException e) {
-            System.err.println("Errore configurazione Data Source " + e.getMessage());
-            e.printStackTrace();
+            throw new RuntimeException("MySQL parameter configuration error", e);
         }
     }
 
@@ -76,7 +74,6 @@ public class DBManager {
                     );
                 """;
         //ON DELETE CASCADE: se elimino l'utente elimino i suoi film
-
 
         try (Connection connection = getConnection();
              Statement statement = connection.createStatement()) {

@@ -12,18 +12,20 @@ import it.unical.dimes.protocol.*;
 import it.unical.dimes.services.FilmService;
 
 import java.util.List;
+import java.util.logging.Logger;
 
-public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBase {
+public class FilmGrpcController extends FilmServiceGrpc.FilmServiceImplBase {
+
+    private static final Logger logger = Logger.getLogger(FilmGrpcController.class.getName());
 
     private final FilmService filmService;
 
-    public CatalogServiceImpl(FilmService filmService) {
+    public FilmGrpcController(FilmService filmService) {
         this.filmService = filmService;
     }
 
     @Override
     public void create(CreateFilmRequest request, StreamObserver<FilmDTO> responseObserver) {
-
         Film film = FilmMapper.fromCreateRequest(request);
         int userId = request.getUserId();
 
@@ -38,9 +40,11 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
 
         } catch (CatalogException e) {
             responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
+            logger.severe("Error during create operation: " + e.getMessage());
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL.withDescription("server error ")
                     .asRuntimeException());
+            logger.severe("Error during create operation: " + e.getMessage());
         }
     }
 
@@ -50,13 +54,14 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
         try {
             FilmFilter filter = mapToFilter(request);
             List<Film> listFilm = filmService.search(filter, userId);
-//            System.out.println("Trovati "+listFilm.size()+" film");
+
             FilmListResponse.Builder responseBuilder = FilmListResponse.newBuilder();
 
-            for (Film film : listFilm) {
-                FilmDTO filmDTO = FilmMapper.toGrpc(film);
-                responseBuilder.addFilmList(filmDTO);
-            }
+            responseBuilder.addAllFilmList(
+                    listFilm.stream()
+                            .map(FilmMapper::toGrpc)
+                            .toList()
+            );
 
             responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
@@ -64,6 +69,7 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL.withDescription("Error during search operation")
                     .asRuntimeException());
+            logger.severe("Error during search operation: " + e.getMessage());
         }
     }
 
@@ -86,8 +92,11 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
 
         } catch (CatalogException e) {
             responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
+            logger.severe("Error during update operation: " + e.getMessage());
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
+            logger.severe("Error during update operation: " + e.getMessage());
+
         }
     }
 
@@ -109,8 +118,10 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
 
         } catch (CatalogException e) {
             responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
+            logger.severe("Error during delete operation: " + e.getMessage());
         } catch (Exception e) {
             responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
+            logger.severe("Error during delete operation: " + e.getMessage());
         }
     }
 
@@ -136,8 +147,6 @@ public class CatalogServiceImpl extends CatalogServiceGrpc.CatalogServiceImplBas
             builder.sortBy(SortBy.valueOf(request.getSortBy().name()));
             builder.sortDirection(request.getSortAscending());
         }
-
         return builder.build();
     }
-
 }

@@ -135,7 +135,6 @@ public class ToolBar {
         }
 
         ViewingStatus selectedStatus = statusComboBox.getValue();
-        if (selectedStatus == null) selectedStatus = ViewingStatus.TO_WATCH; // Valore di default
 
         SortBy selectedSort = sortByComboBox.getValue();
         if (selectedSort == null) selectedSort = SortBy.NONE; // Valore di default

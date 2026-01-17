@@ -18,7 +18,7 @@ public class FilmFilter {
         private String genre = "";
         private Integer yearOfRelease = 0;
         private Integer rating = 0;
-        private ViewingStatus viewingStatus = ViewingStatus.TO_WATCH; //default
+        private ViewingStatus viewingStatus = null; //default
         private SortBy sortBy = SortBy.NONE;
         private boolean sortDirection = true; //true ascen //false
 

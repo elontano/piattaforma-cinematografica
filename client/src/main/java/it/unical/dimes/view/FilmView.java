@@ -87,5 +87,4 @@ public class FilmView {
     public void setOnAddAction(Runnable action) { this.onAddAction = action; }
     public void setOnEditAction(Consumer<Film> action) { this.onEditAction = action; }
     public void setOnDeleteAction(Consumer<Film> action) { this.onDeleteAction = action; }
-
 }
