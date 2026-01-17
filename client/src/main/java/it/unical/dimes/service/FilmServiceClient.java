@@ -17,13 +17,13 @@ import java.util.concurrent.TimeUnit;
 public class FilmServiceClient {
 
     private final ManagedChannel channel;
-    private final CatalogServiceGrpc.CatalogServiceBlockingStub blockingStub;
+    private final FilmServiceGrpc.FilmServiceBlockingStub blockingStub;
 
     public FilmServiceClient(String host, int port){
         this.channel = ManagedChannelBuilder.forAddress(host,port)
                 .usePlaintext()//Senza SSL
                 .build();
-        this.blockingStub = CatalogServiceGrpc.newBlockingStub(this.channel);
+        this.blockingStub = FilmServiceGrpc.newBlockingStub(this.channel);
     }
 
     public void shutdown() throws InterruptedException{
@@ -86,9 +86,7 @@ public class FilmServiceClient {
 
         builder.setUserId(userId);
 
-        ViewingStatusDTO viewingStatusDTO = ViewingStatusMapper.toGrpc(filter.getViewingStatus());
         SortByDTO sortByDTO = SortByMapper.toGrpc(filter.getSortBy());
-
 
         if(filter.getTitle() != null && !filter.getTitle().isEmpty())
             builder.setTitle(filter.getTitle());
@@ -99,7 +97,7 @@ public class FilmServiceClient {
         if(filter.getYearOfRelease()!=null && !(filter.getYearOfRelease()<1895))
             builder.setYearOfRelease(filter.getYearOfRelease());
         if(filter.getViewingStatus() != null )
-            builder.setViewingStatus(viewingStatusDTO);
+            builder.setViewingStatus(ViewingStatusMapper.toGrpc(filter.getViewingStatus()));
         if(filter.getSortBy()!=null && !filter.getSortBy().equals(SortBy.NONE)) {
             builder.setSortBy(sortByDTO);
             builder.setSortAscending(filter.getSortDirection());

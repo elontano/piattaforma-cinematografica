@@ -22,21 +22,18 @@ public class UserRepositoryImpl implements UserRepository {
             ps.setString(1, username);
 
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
-                    User user = new User(rs.getInt("id"),rs.getString("username"), rs.getString("password"));
-                    return user;
+                    return new User(rs.getInt("id"),rs.getString("username"), rs.getString("password"));
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Errore DB durante ricerca utente"+e.getMessage());
+            throw new RuntimeException("DB error during user search",e);
         }
         return null;
     }
 
     @Override
     public User save(User user) {
-        System.out.println("Salvo utente "+user.getUsername());
         String query = UserQueries.SAVE;
 
         try (Connection connection = dbManager.getConnection();
@@ -48,22 +45,22 @@ public class UserRepositoryImpl implements UserRepository {
             int affectedRows = ps.executeUpdate();
 
             if(affectedRows==0)
-                throw new SQLException("Creazione utente fallita, nessuna riga modificata");
+                throw new SQLException("User creation failed, no rows modified");
 
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     user.setId(keys.getInt(1));
                 }else {
-                    throw new SQLException("Creazione utente fallita, ID non ottenuto");
+                    throw new SQLException("User creation failed, ID not obtained");
                 }
-
             }
         } catch (SQLException e) {
+            //cod 1062 specifico per MySql
             if(e.getErrorCode()==1062){
-                throw new UserAlreadyExistsException("L'utente "+user.getUsername()+" esiste già!");
+                throw new UserAlreadyExistsException("User "+user.getUsername()+" already exists!");
             }
             //per tutti gli altri errori
-            throw new RuntimeException("Errore salvataggio "+e.getMessage());
+            throw new RuntimeException("Save Error",e);
         }
         return user;
     }

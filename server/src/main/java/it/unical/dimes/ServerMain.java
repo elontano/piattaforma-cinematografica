@@ -2,17 +2,19 @@ package it.unical.dimes;
 
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import it.unical.dimes.controller.CatalogGrpcController;
+import it.unical.dimes.controller.FilmGrpcController;
 import it.unical.dimes.controller.UserGrpcController;
 import it.unical.dimes.repositories.*;
 import it.unical.dimes.services.FilmService;
 import it.unical.dimes.services.UserService;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class ServerMain {
 
-    private static final int PORT = 500051;
+    private static final Logger logger = Logger.getLogger(ServerMain.class.getName());
+    private static final int PORT = 50051;
 
     public static void initServer() throws IOException, InterruptedException {
 
@@ -25,13 +27,15 @@ public class ServerMain {
 
         FilmRepository filmRepository = new FilmRepositoryImpl(dbManager);
         FilmService filmService = new FilmService(filmRepository);
-        CatalogGrpcController controller = new CatalogGrpcController(filmService);
+        FilmGrpcController controller = new FilmGrpcController(filmService);
 
         Server server = ServerBuilder.forPort(PORT)
                 .addService(userController)
                 .addService(controller)
                 .build();
         server.start();
+
+        logger.info("Server avviato, in ascolto sulla porta " + PORT);
 
         server.awaitTermination();
     }

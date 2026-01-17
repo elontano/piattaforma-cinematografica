@@ -2,6 +2,7 @@ package it.unical.dimes.services;
 
 import it.unical.dimes.entities.User;
 import it.unical.dimes.repositories.UserRepository;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
 
@@ -15,7 +16,18 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
-    public User save (User user){
-        return userRepository.save(user);
+    public User registerUser(User user){
+        if (user.getPassword() == null || user.getPassword().length() < 8) {
+            throw new IllegalArgumentException("La password deve essere di almeno 8 caratteri");
+        }
+
+        String hashed = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+
+        return userRepository.save(new User(user.getUsername(),hashed));
+    }
+
+    public boolean checkPassword(String candidatePassword, String storedHash) {
+        if (storedHash == null || candidatePassword == null) return false;
+        return BCrypt.checkpw(candidatePassword, storedHash);
     }
 }

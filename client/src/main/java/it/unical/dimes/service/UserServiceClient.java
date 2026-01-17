@@ -13,7 +13,7 @@ public class UserServiceClient {
 
     public UserServiceClient(String host, int port) {
         this.channel = ManagedChannelBuilder.forAddress(host, port)
-                .usePlaintext()
+                .usePlaintext()//modificare altrimenti i dati viaggiano in chiaro
                 .build();
         this.blockingStub = UserServiceGrpc.newBlockingStub(this.channel);
     }

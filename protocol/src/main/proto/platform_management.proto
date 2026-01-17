@@ -8,7 +8,7 @@ service UserService{
   rpc Register(UserRequest) returns (UserResponse);
 }
 
-service CatalogService{
+service FilmService{
   rpc SearchFilms(SearchFilmRequest) returns (FilmListResponse);
   rpc Create(CreateFilmRequest) returns (FilmDTO);
   rpc Update(FilmDTO) returns (OperationResponse);
@@ -33,11 +33,10 @@ message FilmDTO{
   string title = 3;
   string director = 4;
   string genre = 5;
-  uint32 year_of_release = 6;
-  uint32 rating = 7;
+  int32 year_of_release = 6;
+  int32 rating = 7;
   ViewingStatusDTO viewing_status = 8;
 }
-
 
 message CreateFilmRequest{
   int32 user_id = 1;
@@ -48,7 +47,6 @@ message CreateFilmRequest{
   int32 rating = 6;
   ViewingStatusDTO viewing_status = 7;
 }
-
 
 message SearchFilmRequest{
   //Se sono vuoti i campi si ignorano
@@ -61,10 +59,12 @@ message SearchFilmRequest{
 
   optional SortByDTO sort_by = 7;
   optional bool sort_ascending = 8; //true asc, false disc
+
+  //implementare sistema di paginazione in futuro
 }
 
 message FilmListResponse{
-  repeated FilmDTO filmList = 1;
+  repeated FilmDTO film_list = 1;
 }
 
 message OperationResponse{
