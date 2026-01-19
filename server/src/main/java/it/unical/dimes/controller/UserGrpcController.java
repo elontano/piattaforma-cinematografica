@@ -66,7 +66,7 @@ public class UserGrpcController extends UserServiceGrpc.UserServiceImplBase {
             if(!loginSuccess){
                 UserResponse response = UserResponse.newBuilder()
                         .setSuccess(false)
-                        .setMessage("Utente o Password errati")
+                        .setMessage("Username or Password not valid")
                         .build();
 
                 responseObserver.onNext(response);

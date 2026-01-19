@@ -64,5 +64,4 @@ public class UserRepositoryImpl implements UserRepository {
         }
         return user;
     }
-
 }

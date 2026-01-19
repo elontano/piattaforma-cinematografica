@@ -27,7 +27,8 @@ public class UserService {
     }
 
     public boolean checkPassword(String candidatePassword, String storedHash) {
-        if (storedHash == null || candidatePassword == null) return false;
+        if (storedHash == null || candidatePassword == null)
+            return false;
         return BCrypt.checkpw(candidatePassword, storedHash);
     }
 }

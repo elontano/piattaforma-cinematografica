@@ -6,5 +6,7 @@ public enum ButtonType {
     DELETE,
     EDIT,
     SAVE,
-    CANCEL
+    CANCEL,
+    LOGIN,
+    REGISTER
 }

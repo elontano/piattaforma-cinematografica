@@ -18,7 +18,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.function.Consumer;
 
-public class ToolBar {
+public class FilmToolBar {
 
     private final HBox toolBar;
     private final UIFactory uiFactory;
@@ -29,7 +29,6 @@ public class ToolBar {
     private TextField genreField;
     private TextField yearField;
 
-    //    private Spinner<Integer> yearSpinner; //campo con frecce su e giù
     private ComboBox<ViewingStatus> statusComboBox;
     private ComboBox<SortBy> sortByComboBox;
     private ToggleButton sortDirectionToggle;
@@ -42,7 +41,7 @@ public class ToolBar {
     private Consumer<FilmFilter> onSearchAction;
     private Runnable onAddAction;
 
-    public ToolBar(UIFactory factory){
+    public FilmToolBar(UIFactory factory){
         this.toolBar = new HBox(5);
         this.uiFactory = factory;
 
@@ -99,11 +98,11 @@ public class ToolBar {
         // Logica al click: cambio icona
         sortDirectionToggle.setOnAction(e -> {
             if (sortDirectionToggle.isSelected()) {
-                // Se selezionato -> Z-A (Decrescente)
+                //selezionato -> Z-A (Decrescente)
                 sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_UP));
                 sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Decrescente (Z-A)"));
             } else {
-                // Se non selezionato -> A-Z (Crescente)
+                //non selezionato -> A-Z (Crescente)
                 sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_DOWN));
                 sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Crescente (A-Z)"));
             }
@@ -111,13 +110,13 @@ public class ToolBar {
     }
 
     private void createButtons(){
-        searchButton = uiFactory.createButton("Cerca", ButtonType.SEARCH, e -> {
+        searchButton = uiFactory.createButton("Search", ButtonType.SEARCH, e -> {
             if(onSearchAction != null) {
                 onSearchAction.accept(buildFilterFromFields());
             }
         });
 
-        addButton = uiFactory.createButton("Nuovo", ButtonType.NEW, e -> {
+        addButton = uiFactory.createButton("New", ButtonType.NEW, e -> {
             if(onAddAction != null)
                 onAddAction.run();
         });

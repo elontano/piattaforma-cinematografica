@@ -3,7 +3,7 @@ package it.unical.dimes.command;
 import it.unical.dimes.model.Film;
 import it.unical.dimes.model.FilmFilter;
 import it.unical.dimes.service.FilmServiceClient;
-import it.unical.dimes.view.FilmView;
+import it.unical.dimes.view.CatalogView;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,12 +12,12 @@ import java.util.List;
 
 public class SearchCommand implements Command {
 
-    private FilmView view;
+    private CatalogView view;
     private FilmServiceClient client;
     private FilmFilter filter;
     private Integer userId;
 
-    public SearchCommand(FilmView view, FilmServiceClient client, FilmFilter filter, Integer userId) {
+    public SearchCommand(CatalogView view, FilmServiceClient client, FilmFilter filter, Integer userId) {
         this.view = view;
         this.client = client;
         this.filter = filter;
@@ -30,15 +30,15 @@ public class SearchCommand implements Command {
             try {
                 List<Film> results = client.searchFilms(filter,userId);
 
+                //ObservableList -> lista di JavaFX, osserva i cambiamenti e notifica chi la sta cambiando
                 ObservableList<Film> observableList = FXCollections.observableArrayList(results);
 
                 Platform.runLater(() -> {
-                    view.setFilmData(observableList); // Chiama il metodo della tua View
+                    view.setFilmData(observableList);
                 });
 
             } catch (Exception e) {
-                e.printStackTrace();
-                Platform.runLater(() -> System.err.println("Errore ricerca: " + e.getMessage()));
+                Platform.runLater(() -> System.err.println("Error search: " + e.getMessage()));
             }
         }).start();
     }

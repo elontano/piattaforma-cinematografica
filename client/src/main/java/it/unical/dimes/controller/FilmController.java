@@ -7,16 +7,16 @@ import it.unical.dimes.model.Film;
 import it.unical.dimes.model.FilmFilter;
 import it.unical.dimes.service.FilmServiceClient;
 import it.unical.dimes.view.FilmFormDialog;
-import it.unical.dimes.view.FilmView;
+import it.unical.dimes.view.CatalogView;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 public class FilmController {
-    private final FilmView view;
+    private final CatalogView view;
     private final FilmServiceClient client;
     private final int userId;
 
-    public FilmController(FilmView view, FilmServiceClient client, int userId) {
+    public FilmController(CatalogView view, FilmServiceClient client, int userId) {
         this.view = view;
         this.client = client;
         this.userId = userId;
@@ -41,23 +41,19 @@ public class FilmController {
         FilmFormDialog dialog = new FilmFormDialog(null,view.getUiFactory());
 
         dialog.showAndWait().ifPresent(newFilm -> {
-            new SaveCommand(client, newFilm, userId, () -> {
-                refreshData();
-            }).execute();
+            new SaveCommand(client, newFilm, userId, this::refreshData).execute();
         });
     }
 
     private void handleEdit(Film film) {
         FilmFormDialog dialog = new FilmFormDialog(film,view.getUiFactory());
         dialog.showAndWait().ifPresent(updatedFilm -> {
-
             Runnable onSuccess = () -> {
-                int index = view.getFilmsLists().indexOf(film);
+                int index = view.getFilmsList().indexOf(film);
                 if(index>=0)
-                    view.getFilmsLists().set(index,updatedFilm);
+                    view.getFilmsList().set(index,updatedFilm);
                 view.refreshTable();
             };
-
             new SaveCommand(client, updatedFilm, userId, onSuccess).execute();
         });
     }

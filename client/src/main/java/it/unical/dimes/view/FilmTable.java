@@ -40,20 +40,27 @@ public class FilmTable {
     }
 
     private void createColumns(){
-        // TITOLO
+        // TITLE
         TableColumn<Film, String> colTitle = new TableColumn<>("Title");
-        colTitle.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getTitle()));
+        colTitle.setCellValueFactory(
+                cell -> new SimpleStringProperty(cell.getValue().getTitle())
+        );
 
-        // REGISTA
+        // DIRECTOR
         TableColumn<Film, String> colDirector = new TableColumn<>("Director");
         colDirector.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getDirector()));
 
-        // ANNO
+        // YEAR
         TableColumn<Film, String> colYear = new TableColumn<>("Year");
         colYear.setCellValueFactory(cell ->
                 new SimpleStringProperty(String.valueOf(
                         (cell.getValue().getYearOfRelease()==0) ? "" : cell.getValue().getYearOfRelease()
                 )));
+
+        //GENRE
+        TableColumn<Film,String> colGenre = new TableColumn<>("Genre");
+        colGenre.setCellValueFactory(cell->
+                new SimpleStringProperty(cell.getValue().getGenre()));
 
         // RATING
         TableColumn<Film, Integer> colRating = new TableColumn<>("Rating");
@@ -98,10 +105,8 @@ public class FilmTable {
 
 
             private final HBox pane = new HBox(10, btnEdit, btnDelete);
-
             {
                 pane.setAlignment(Pos.CENTER);
-                //aggiungere edit o delete in testo se necessario
             }
 
             @Override
@@ -111,14 +116,14 @@ public class FilmTable {
             }
         });
 
-        tableView.getColumns().addAll(colTitle, colDirector, colYear, colRating, colStatus, colAction);
+        tableView.getColumns().addAll(colTitle, colDirector,colGenre,colYear, colRating, colStatus, colAction);
     }
 
     public Node getView(){
         return tableView;
     }
 
-    // Metodo fondamentale per passare i dati alla tabella
+    //Metodo per passare i dati alla tabella
     public void setItems(ObservableList<Film> films) {
         tableView.setItems(films);
     }

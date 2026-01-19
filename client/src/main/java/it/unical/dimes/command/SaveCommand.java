@@ -9,7 +9,7 @@ public class SaveCommand implements Command{
     private final FilmServiceClient client;
     private final Film film;
     private final Integer userId;
-    private final Runnable onSuccess; // Cosa fare dopo aver salvato (es. refresh)
+    private final Runnable onSuccess; // Cosa fare dopo aver salvato, lo stabiliamo in FilmController
 
     public SaveCommand(FilmServiceClient client, Film film, Integer userId, Runnable onSuccess) {
         this.client = client;
@@ -35,7 +35,7 @@ public class SaveCommand implements Command{
 
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    System.err.println("Errore: " + e.getMessage());
+                    System.err.println("Error: " + e.getMessage());
                 });
             }
         }).start();

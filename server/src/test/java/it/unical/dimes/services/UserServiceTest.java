@@ -54,7 +54,7 @@ class UserServiceTest {
 
             assertNotNull(registeredUser);
             assertEquals("test",registeredUser.getUsername());
-            assertNotEquals(user.getPassword(),registeredUser.getUsername());
+            assertNotEquals(user.getPassword(),registeredUser.getPassword());
 
             ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
             verify(userRepository).save(captor.capture());

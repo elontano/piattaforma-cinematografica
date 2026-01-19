@@ -1,12 +1,11 @@
 package it.unical.dimes.repositories;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
+import it.unical.dimes.entities.Film;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Properties;
 
 public class DBManager {
