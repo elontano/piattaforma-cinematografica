@@ -18,10 +18,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.util.function.Consumer;
 
-public class ClientMain extends Application {
+public class InitializerGUI extends Application {
     private static final String HOST = "127.0.0.1";
     private static final int PORT = 50051;
 
@@ -39,7 +38,7 @@ public class ClientMain extends Application {
 
         this.userServiceClient = new UserServiceClient(HOST,PORT);
 
-        //Applico il tema di AtlantaFX primer light e usando setUserAgenStyleSheet il tema si applica anche ai vari dialogs
+        //tema di AtlantaFX primer light e usando setUserAgenStyleSheet il tema si applica anche ai vari dialogs
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
         showAuthenticationDialog();
@@ -49,10 +48,9 @@ public class ClientMain extends Application {
         LoginDialog loginDialog = new LoginDialog(uiFactory);
 
         loginDialog.showAndWait().ifPresentOrElse(
-                // CASO 1: L'utente ha premuto Login o Register
                 authData -> handleAuthenticationRequest(authData),
 
-                // CASO 2: L'utente ha chiuso o annullato -> Chiudi tutto
+                //se l'utente ha chiuso o annullato
                 () -> {
                     userServiceClient.shutdown();
                     Platform.exit();
@@ -87,7 +85,7 @@ public class ClientMain extends Application {
         userServiceClient.shutdown();
 
         //Configurazione dopo login
-        FilmView filmView = new FilmView(uiFactory);
+        CatalogView filmView = new CatalogView(uiFactory);
         FilmServiceClient filmServiceClient = new FilmServiceClient(HOST, PORT);
 
         FilmController controller = new FilmController(filmView, filmServiceClient, user.getUserId());
@@ -98,7 +96,6 @@ public class ClientMain extends Application {
 
         primaryStage.setOnCloseRequest(event -> {
             Platform.exit();
-            System.exit(0);
         });
 
         primaryStage.show();

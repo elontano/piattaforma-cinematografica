@@ -14,6 +14,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.Optional;
 
 public class FilmFormDialog {
+
     private final Dialog<Film> filmDialog;
     private final UIFactory uiFactory;
 
@@ -68,9 +69,7 @@ public class FilmFormDialog {
 
         statusComboBox = uiFactory.createComboBox("Status", ViewingStatus.values());
 
-        // Lo Spinner non è nella factory, lo lasciamo standard
-        ratingSpinner = new Spinner<>(0, 5, 0);
-        ratingSpinner.setEditable(true);
+        ratingSpinner = uiFactory.createIntegerSpinner(0,5,0);
     }
 
     private void setTitleAndHeader(Film filmToEdit){

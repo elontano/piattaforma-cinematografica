@@ -35,7 +35,7 @@ public class ServerMain {
                 .build();
         server.start();
 
-        logger.info("Server avviato, in ascolto sulla porta " + PORT);
+        logger.info("Server started, listening on port " + PORT);
 
         server.awaitTermination();
     }

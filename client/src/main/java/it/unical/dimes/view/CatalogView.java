@@ -10,10 +10,10 @@ import javafx.scene.layout.BorderPane;
 
 import java.util.function.Consumer;
 
-public class FilmView {
-    private BorderPane root; //contenitore
+public class CatalogView {
+    private BorderPane root;
     private FilmTable filmTable;
-    private UIFactory uiFactory;
+    private final UIFactory uiFactory;
 
     // Event Handlers
     private Consumer<Film> onEditAction;
@@ -21,14 +21,9 @@ public class FilmView {
     private Consumer<FilmFilter> onSearchAction;
     private Runnable onAddAction;
 
-    public FilmView(UIFactory factory) {
+    public CatalogView(UIFactory factory) {
         this.uiFactory = factory;
         initView();
-    }
-
-    // Restituisce la vista da passare alla Scene
-    public Parent getView() {
-        return root;
     }
 
     public UIFactory getUiFactory(){
@@ -39,8 +34,11 @@ public class FilmView {
         root = new BorderPane();
         root.setPadding(new Insets(15));
 
-        ToolBar toolBar = new ToolBar(uiFactory);
+        FilmToolBar toolBar = new FilmToolBar(uiFactory);
         filmTable = new FilmTable(uiFactory);
+
+        //collegamento eventi
+        //FilmView qua prende l'evento dal componente figlio e lo passa al Controller
 
         toolBar.setOnSearchAction(filter -> {
             if(onSearchAction != null)
@@ -66,6 +64,12 @@ public class FilmView {
         root.setCenter(filmTable.getView());
     }
 
+
+    // Restituisce la vista da passare alla Scene
+    public Parent getView() {
+        return root;
+    }
+
     public void setFilmData(ObservableList<Film> films){
         filmTable.setItems(films);
     }
@@ -74,7 +78,7 @@ public class FilmView {
         return filmTable;
     }
 
-    public ObservableList<Film> getFilmsLists(){
+    public ObservableList<Film> getFilmsList(){
         return filmTable.getItems();
     }
 

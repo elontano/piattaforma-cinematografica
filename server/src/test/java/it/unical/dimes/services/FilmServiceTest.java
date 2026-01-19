@@ -50,6 +50,7 @@ class FilmServiceTest {
         userIdNull = null;
 
         validFilm = new Film.Builder("Inception")
+                .id(1)
                 .rating(5)
                 .yearOfRelease(2010)
                 .build();
@@ -73,9 +74,9 @@ class FilmServiceTest {
         @DisplayName("Should save successfully when valid id and film is provided")
         void shouldSaveSuccessfully(){
             when(filmRepository.save(validFilm,userId)).thenReturn(validFilm);
-            //when
+
             Film savedFilm = filmService.save(validFilm,userId);
-            //then (verifica)
+
             assertNotNull(savedFilm,"Il film salvato non dovrebbe essere null");
             assertEquals("Inception",savedFilm.getTitle());
         }

@@ -21,7 +21,7 @@ public class LoginCommand implements Command{
 
     @Override
     public void execute() {
-        // Thread separato per non bloccare l'UI
+        //Thread separato per non bloccare l'UI
         new Thread(() -> {
             // Chiamata sincrona al server (lenta)
             UserResponse response = client.login(username, password);
