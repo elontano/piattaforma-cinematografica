@@ -7,7 +7,7 @@
 
 Un'applicazione software distribuita per la gestione di una collezione personale di film, sviluppata con architettura **Client-Server** basata su **gRPC**.
 
-Il progetto permette agli utenti di organizzare la propria collezione virtuale di film , offrendo funzionalità di catalogazione, ricerca avanzata e persistenza dei dati.
+Il progetto permette agli utenti di organizzare la propria collezione virtuale di film, offrendo funzionalità di catalogazione, ricerca avanzata e persistenza dei dati.
 
 ## Funzionalità Principali
 
@@ -47,7 +47,7 @@ Interfaccia utente interattiva sviluppata in JavaFX.
 * Maven installato.
 * MySQL Server in esecuzione.
 
-### 1. Configurazione Database
+### Configurazione Database
 Crea un database vuoto chiamato `piattaforma_cinematografica`. Le tabelle verranno create automaticamente all'avvio del server.
 Assicurati che i parametri in `server/src/main/resources/config.properties` corrispondano alla tua configurazione locale:
 ```properties
