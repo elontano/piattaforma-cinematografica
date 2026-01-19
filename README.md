@@ -1,4 +1,4 @@
-# 🎬 Piattaforma Cinematografica - Gestione Remota
+# 🎬 Piattaforma Cinematografica - Gestione Remota 🎬 
 
 ![Java](https://img.shields.io/badge/Java-17%2B-orange)
 ![gRPC](https://img.shields.io/badge/gRPC-Client%2FServer-blue)
