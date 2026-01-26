@@ -61,6 +61,9 @@ public class StandardUIFactory implements UIFactory {
             case REGISTER:
                 button.setGraphic(new FontIcon(FontAwesomeSolid.USER_PLUS));
                 button.getStyleClass().add(Styles.ACCENT);
+            case REFRESH:
+                button.setGraphic(new FontIcon(FontAwesomeSolid.SYNC_ALT));
+                button.getStyleClass().add(Styles.ACCENT);
 
             default:
                 break;
@@ -109,14 +112,14 @@ public class StandardUIFactory implements UIFactory {
         VBox box = new VBox(5); // Spaziatura verticale di 5px
         box.setAlignment(Pos.CENTER);
 
-        // Configurazione Titolo
+        //titolo
         if (titleText != null && !titleText.isEmpty()) {
             Label title = new Label(titleText);
             title.getStyleClass().add(Styles.TITLE_2);
             box.getChildren().add(title);
         }
 
-        // Configurazione Sottotitolo
+        //sottotitolo
         if (subtitleText != null && !subtitleText.isEmpty()) {
             Label subtitle = new Label(subtitleText);
             subtitle.getStyleClass().add(Styles.TEXT_MUTED);

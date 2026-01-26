@@ -20,6 +20,7 @@ public class CatalogView {
     private Consumer<Film> onDeleteAction;
     private Consumer<FilmFilter> onSearchAction;
     private Runnable onAddAction;
+    private Runnable onRefreshAction;
 
     public CatalogView(UIFactory factory) {
         this.uiFactory = factory;
@@ -34,7 +35,7 @@ public class CatalogView {
         root = new BorderPane();
         root.setPadding(new Insets(15));
 
-        FilmToolBar toolBar = new FilmToolBar(uiFactory);
+        AppToolBar toolBar = new AppToolBar(uiFactory);
         filmTable = new FilmTable(uiFactory);
 
         //collegamento eventi
@@ -48,6 +49,11 @@ public class CatalogView {
         toolBar.setOnAddAction(()->{
             if(onAddAction!=null)
                 onAddAction.run();
+        });
+
+        toolBar.setOnRefreshAction(()->{
+            if(onRefreshAction!=null)
+                onRefreshAction.run();
         });
 
         filmTable.setOnEditAction(film -> {
@@ -91,4 +97,5 @@ public class CatalogView {
     public void setOnAddAction(Runnable action) { this.onAddAction = action; }
     public void setOnEditAction(Consumer<Film> action) { this.onEditAction = action; }
     public void setOnDeleteAction(Consumer<Film> action) { this.onDeleteAction = action; }
+    public void setOnRefreshAction(Runnable action) { this.onRefreshAction = action; }
 }

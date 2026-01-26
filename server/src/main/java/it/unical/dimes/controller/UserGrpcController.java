@@ -64,13 +64,15 @@ public class UserGrpcController extends UserServiceGrpc.UserServiceImplBase {
             }
 
             if(!loginSuccess){
-                UserResponse response = UserResponse.newBuilder()
-                        .setSuccess(false)
-                        .setMessage("Username or Password not valid")
-                        .build();
 
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
+                responseObserver.onError(Status.UNAUTHENTICATED.withDescription("Credentials invalid").asRuntimeException());
+//                UserResponse response = UserResponse.newBuilder()
+//                        .setSuccess(false)
+//                        .setMessage("Username or Password not valid")
+//                        .build();
+//
+//                responseObserver.onNext(response);
+//                responseObserver.onCompleted();
                 return;
             }
 

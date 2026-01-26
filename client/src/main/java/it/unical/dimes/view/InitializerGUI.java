@@ -2,8 +2,8 @@ package it.unical.dimes.view;
 
 import atlantafx.base.theme.PrimerLight;
 import it.unical.dimes.command.Command;
-import it.unical.dimes.command.LoginCommand;
-import it.unical.dimes.command.RegisterCommand;
+import it.unical.dimes.command.SignInCommand;
+import it.unical.dimes.command.SignUpCommand;
 import it.unical.dimes.controller.FilmController;
 import it.unical.dimes.factory.StandardUIFactory;
 import it.unical.dimes.factory.UIFactory;
@@ -49,7 +49,6 @@ public class InitializerGUI extends Application {
 
         loginDialog.showAndWait().ifPresentOrElse(
                 authData -> handleAuthenticationRequest(authData),
-
                 //se l'utente ha chiuso o annullato
                 () -> {
                     userServiceClient.shutdown();
@@ -61,21 +60,25 @@ public class InitializerGUI extends Application {
     private void handleAuthenticationRequest(UserAuthentication user){
         Consumer<UserResponse> onResult = (response)->{
             if(response!=null && response.getSuccess()){
-                //avviamo l'applicazione
                 initApplication(response);
-            }else {
-                String msg = (response != null && response.getMessage() != null)
-                        ? response.getMessage() : "Credenziali non valide.";
-                showError("Errore Accesso",msg);
+            }else{
+                String errorTitle = user.isRegister() ? "Registration Error " : "Login Error";
+
+                String errorMessage = (response != null && response.getMessage() != null)
+                        ? response.getMessage()
+                        : "Errore sconosciuto di comunicazione.";
+
+                showError(errorTitle, errorMessage);
+
                 showAuthenticationDialog();
             }
         };
 
         Command command;
         if(user.isRegister()){
-            command = new RegisterCommand(userServiceClient,user.username(),user.password(),onResult);
+            command = new SignUpCommand(userServiceClient,user.username(),user.password(),onResult);
         }else {
-            command = new LoginCommand(userServiceClient,user.username(),user.password(),onResult);
+            command = new SignInCommand(userServiceClient,user.username(),user.password(),onResult);
         }
 
         command.execute();
@@ -99,7 +102,6 @@ public class InitializerGUI extends Application {
         });
 
         primaryStage.show();
-
     }
 
     private void showError(String title, String content){

@@ -50,13 +50,13 @@ public class LoginDialog {
         grid.add(new Label("Password:"), 0, 1);
         grid.add(passwordField, 1, 1);
 
-        Button btnLogin = uiFactory.createButton("Login", ButtonType.LOGIN,e->{
+        Button btnLogin = uiFactory.createButton("Sign In", ButtonType.LOGIN,e->{
             isRegister = false; //login
             isConfirmed = true;
             stage.close();
         });
 
-        Button btnRegister = uiFactory.createButton("Register",ButtonType.REGISTER,e->{
+        Button btnRegister = uiFactory.createButton("Sign Up",ButtonType.REGISTER,e->{
             isRegister = true;
             isConfirmed = true;
             stage.close();

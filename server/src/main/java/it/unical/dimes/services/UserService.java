@@ -17,7 +17,8 @@ public class UserService {
     }
 
     public User registerUser(User user){
-        if (user.getPassword() == null || user.getPassword().length() < 8) {
+        //|| user.getPassword().length() < 8
+        if (user.getPassword() == null ) {
             throw new IllegalArgumentException("La password deve essere di almeno 8 caratteri");
         }
 

@@ -8,5 +8,6 @@ public enum ButtonType {
     SAVE,
     CANCEL,
     LOGIN,
-    REGISTER
+    REGISTER,
+    REFRESH
 }

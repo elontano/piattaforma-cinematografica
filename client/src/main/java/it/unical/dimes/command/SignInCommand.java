@@ -6,13 +6,13 @@ import javafx.application.Platform;
 
 import java.util.function.Consumer;
 
-public class LoginCommand implements Command{
+public class SignInCommand implements Command{
     private final UserServiceClient client;
     private final String username;
     private final String password;
     private final Consumer<UserResponse> onResult; // Callback per la risposta
 
-    public LoginCommand(UserServiceClient client, String username, String password, Consumer<UserResponse> onResult) {
+    public SignInCommand(UserServiceClient client, String username, String password, Consumer<UserResponse> onResult) {
         this.client = client;
         this.username = username;
         this.password = password;
@@ -23,7 +23,7 @@ public class LoginCommand implements Command{
     public void execute() {
         //Thread separato per non bloccare l'UI
         new Thread(() -> {
-            // Chiamata sincrona al server (lenta)
+            // Chiamata sincrona al server
             UserResponse response = client.login(username, password);
 
             // Ritorno al thread JavaFX per aggiornare l'interfaccia
