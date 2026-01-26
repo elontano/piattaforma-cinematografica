@@ -29,12 +29,8 @@ public class FilmMapper {
 
         if (film.getViewingStatus() != null) {
             filmDTOBuilder.setViewingStatus(ViewingStatusMapper.toGrpc(film.getViewingStatus()));
-        } else {
-            // Opzionale: gestire il caso in cui lo status sia null,
-            // magari impostando un valore di default definito nel tuo proto (es. UNKNOWN)
         }
 
-        // 6. Gestione ID opzionale
         if(film.getId() != null){
             filmDTOBuilder.setId(film.getId());
         }

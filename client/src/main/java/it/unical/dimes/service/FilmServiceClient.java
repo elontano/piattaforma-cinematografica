@@ -13,8 +13,10 @@ import it.unical.dimes.protocol.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class FilmServiceClient {
+    private final Logger logger = Logger.getLogger(FilmServiceClient.class.getName());
 
     private final ManagedChannel channel;
     private final FilmServiceGrpc.FilmServiceBlockingStub blockingStub;
@@ -27,9 +29,9 @@ public class FilmServiceClient {
     }
 
     public void shutdown() throws InterruptedException{
-        System.out.println("Chiusura canale...");
+        logger.info("Shutter down channel...");
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
-        System.out.println("Canale chiuso ");
+        logger.info("Channel Closed.");
     }
 
     public Film createFilm(Film film,Integer userId){
@@ -67,7 +69,6 @@ public class FilmServiceClient {
         OperationResponse response = blockingStub.update(requestBuilder.build());
         if(!response.getValid())
             throw new RuntimeException(response.getMessage());
-        System.out.println(response.getMessage());
     }
 
     public void delete(Integer id,Integer userId){
@@ -78,7 +79,6 @@ public class FilmServiceClient {
         OperationResponse response = blockingStub.delete(filmIdRequest);
         if(!response.getValid())
             throw new RuntimeException(response.getMessage());
-        System.out.println(response.getMessage());
     }
 
     private SearchFilmRequest createSearchRequest(FilmFilter filter, Integer userId){

@@ -17,8 +17,10 @@ import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
-public class FilmToolBar {
+public class AppToolBar {
+    private final Logger logger = Logger.getLogger(AppToolBar.class.getName());
 
     private final HBox toolBar;
     private final UIFactory uiFactory;
@@ -35,13 +37,14 @@ public class FilmToolBar {
 
     private Button searchButton;
     private Button addButton;
-    // private Button refreshButton; per ricaricare senza filtri
+    private Button refreshButton;
 
     // Event Handlers
     private Consumer<FilmFilter> onSearchAction;
     private Runnable onAddAction;
+    private Runnable onRefreshAction;
 
-    public FilmToolBar(UIFactory factory){
+    public AppToolBar(UIFactory factory){
         this.toolBar = new HBox(5);
         this.uiFactory = factory;
 
@@ -64,7 +67,7 @@ public class FilmToolBar {
                 titleField, directorField, genreField,
                 yearField, statusComboBox,
                 sortByComboBox, sortDirectionToggle,
-                searchButton, space, addButton
+                searchButton,refreshButton,space, addButton
         );
     }
 
@@ -74,39 +77,39 @@ public class FilmToolBar {
         genreField = uiFactory.createTextField("Genre...", 100);
         yearField = uiFactory.createTextField("Year...", 80);
 
+
         // Gestione status per evitare UNKNOWN
         ViewingStatus[] vs = ViewingStatus.values();
         ViewingStatus[] newVS = new ViewingStatus[vs.length - 1];
         System.arraycopy(vs, 1, newVS, 0, vs.length - 1);
-
         statusComboBox = uiFactory.createComboBox("Status", newVS);
         statusComboBox.setPrefWidth(100);
 
-        sortByComboBox = uiFactory.createComboBox("Sort by", SortBy.values());
 
-        // Creiamo il toggle button tramite factory (testo vuoto perché usiamo l'icona)
+        SortBy[] sb = SortBy.values();
+        SortBy[] newSortBy = new SortBy[sb.length - 1];
+        System.arraycopy(sb, 1, newSortBy, 0, sb.length - 1);
+        sortByComboBox = uiFactory.createComboBox("Sort by", newSortBy);
+
+        //toggle button tramite factory (testo vuoto perché usiamo l'icona)
         sortDirectionToggle = uiFactory.createToggleButton("", 40);
-
-        // Stile: lo rendiamo un pulsante icona (quadrato/compatto)
+        //pulsante icona (quadrato/compatto)
         sortDirectionToggle.getStyleClass().add(Styles.BUTTON_ICON);
 
-        // Icona iniziale (es. A-Z, ordinamento discendente standard)
-        sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_DOWN));
-        sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Crescente (A-Z)"));
-        sortDirectionToggle.setSelected(false); // Default: non selezionato
+        updateSortToggle(false);
 
-        // Logica al click: cambio icona
-        sortDirectionToggle.setOnAction(e -> {
-            if (sortDirectionToggle.isSelected()) {
-                //selezionato -> Z-A (Decrescente)
-                sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_UP));
-                sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Decrescente (Z-A)"));
-            } else {
-                //non selezionato -> A-Z (Crescente)
-                sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_DOWN));
-                sortDirectionToggle.setTooltip(new Tooltip("Ordinamento Crescente (A-Z)"));
-            }
-        });
+        //al click cambio icona
+        sortDirectionToggle.setOnAction(e -> updateSortToggle(sortDirectionToggle.isSelected()) );
+    }
+
+    private void updateSortToggle(boolean isSelected){
+        if(isSelected){
+            sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_DOWN));
+            sortDirectionToggle.setTooltip(new Tooltip("Sort Ascending (A-Z)"));
+        }else {
+            sortDirectionToggle.setGraphic(new FontIcon(FontAwesomeSolid.SORT_ALPHA_UP));
+            sortDirectionToggle.setTooltip(new Tooltip("Sort Descending (Z-A)"));
+        }
     }
 
     private void createButtons(){
@@ -120,6 +123,11 @@ public class FilmToolBar {
             if(onAddAction != null)
                 onAddAction.run();
         });
+
+        refreshButton = uiFactory.createButton("",ButtonType.REFRESH,e->{
+            if(onRefreshAction!=null)
+                onRefreshAction.run();
+        });
     }
 
     private FilmFilter buildFilterFromFields() {
@@ -130,7 +138,7 @@ public class FilmToolBar {
                 year = Integer.parseInt(yearText);
             }
         } catch (NumberFormatException e) {
-            System.err.println("Invalid year, year filter ignored.");
+            logger.warning("Invalid year format");
         }
 
         ViewingStatus selectedStatus = statusComboBox.getValue();
@@ -156,4 +164,5 @@ public class FilmToolBar {
 
     public void setOnSearchAction(Consumer<FilmFilter> onSearchAction) { this.onSearchAction = onSearchAction; }
     public void setOnAddAction(Runnable onAddAction) { this.onAddAction = onAddAction; }
+    public void setOnRefreshAction(Runnable onRefreshAction) { this.onRefreshAction = onRefreshAction; }
 }

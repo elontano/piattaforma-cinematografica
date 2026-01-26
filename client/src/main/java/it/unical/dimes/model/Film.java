@@ -1,5 +1,7 @@
 package it.unical.dimes.model;
 
+import java.util.Objects;
+
 public class Film {
     private final Integer id;
     private final Integer userId;
@@ -110,25 +112,29 @@ public class Film {
 
     @Override
     public String toString() {
-        return "{id= "+id
-                +"user id= "+userId
-                +" title= '"
-                +title+"'"
-                +" director= '"
-                +director+"'"
-                +" year= '"
-                +yearOfRelease+"'";
-        //da completare
+        return "Film{" +
+                "director='" + director + '\'' +
+                ", id=" + id +
+                ", userId=" + userId +
+                ", title='" + title + '\'' +
+                ", genre='" + genre + '\'' +
+                ", yearOfRelease=" + yearOfRelease +
+                ", rating=" + rating +
+                ", viewingStatus=" + viewingStatus +
+                '}';
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (! (o instanceof Film)) return false;
+        Film film = (Film) o;
+        return Objects.equals(id,film.id) && Objects.equals(title,film.title);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(id,title);
     }
 }
 

@@ -30,6 +30,7 @@ public class FilmController {
         view.setOnAddAction(this::handleAdd);
         view.setOnEditAction(this::handleEdit);
         view.setOnDeleteAction(this::handleDelete);
+        view.setOnRefreshAction(this::refreshData);
     }
 
     private void handleSearch(FilmFilter filter) {
@@ -59,7 +60,7 @@ public class FilmController {
     }
 
     private void handleDelete(Film film) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Wanto to remove '" + film.getTitle() + "' ?");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Remove '" + film.getTitle() + "' from your collection ?");
 
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {

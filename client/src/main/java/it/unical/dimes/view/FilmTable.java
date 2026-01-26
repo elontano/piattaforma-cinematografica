@@ -30,7 +30,7 @@ public class FilmTable {
         //rende colonne larghe quanto basta per riempire la tabella
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        tableView.setPlaceholder(new Label("Nessun film presente!"));
+        tableView.setPlaceholder(new Label("Your collection is empty!"));
 
         initLayout();
     }
@@ -100,7 +100,7 @@ public class FilmTable {
 
             private final Button btnDelete = uiFactory.createButton("", ButtonType.DELETE, e -> {
                 Film film = getTableView().getItems().get(getIndex());
-                if (onDeleteAction != null) onDeleteAction.accept(film);
+                if (onDeleteAction != null)  onDeleteAction.accept(film);
             });
 
 

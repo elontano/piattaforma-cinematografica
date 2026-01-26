@@ -6,13 +6,13 @@ import javafx.application.Platform;
 
 import java.util.function.Consumer;
 
-public class RegisterCommand implements Command {
+public class SignUpCommand implements Command {
     private final UserServiceClient client;
     private final String username;
     private final String password;
     private final Consumer<UserResponse> onResult;
 
-    public RegisterCommand(UserServiceClient client, String username, String password, Consumer<UserResponse> onResult) {
+    public SignUpCommand(UserServiceClient client, String username, String password, Consumer<UserResponse> onResult) {
         this.client = client;
         this.username = username;
         this.password = password;

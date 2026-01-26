@@ -36,7 +36,7 @@ public class FilmFormDialog {
 
         initFields();
 
-        ButtonType saveButtonType = new ButtonType("Salva", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         filmDialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
         //sStilizziamo i pulsanti del Dialog (Icone + Colori)
@@ -149,6 +149,7 @@ public class FilmFormDialog {
             film.id(existingFilm.getId());
         else
             film.id(0);//forzo ID a 0
+
         film.director(directorField.getText()!=null?directorField.getText():"");
         film.genre(genreField.getText()!=null?genreField.getText():"");
 
