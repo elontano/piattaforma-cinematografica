@@ -1,6 +1,6 @@
 package it.unical.dimes.view;
 
-import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.CupertinoLight;
 import it.unical.dimes.command.Command;
 import it.unical.dimes.command.SignInCommand;
 import it.unical.dimes.command.SignUpCommand;
@@ -30,16 +30,13 @@ public class InitializerGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
         Platform.setImplicitExit(false);
 
         this.primaryStage = primaryStage;
         this.uiFactory = new StandardUIFactory();
-
         this.userServiceClient = new UserServiceClient(HOST,PORT);
 
-        //tema di AtlantaFX primer light e usando setUserAgenStyleSheet il tema si applica anche ai vari dialogs
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
+        Application.setUserAgentStylesheet(new CupertinoLight().getUserAgentStylesheet());
 
         showAuthenticationDialog();
     }
@@ -48,9 +45,7 @@ public class InitializerGUI extends Application {
         LoginDialog loginDialog = new LoginDialog(uiFactory);
 
         loginDialog.showAndWait().ifPresentOrElse(
-                authData -> handleAuthenticationRequest(authData),
-                //se l'utente ha chiuso o annullato
-                () -> {
+                authData -> handleAuthenticationRequest(authData), () -> {
                     userServiceClient.shutdown();
                     Platform.exit();
                 }
@@ -64,9 +59,9 @@ public class InitializerGUI extends Application {
             }else{
                 String errorTitle = user.isRegister() ? "Registration Error " : "Login Error";
 
-                String errorMessage = (response != null && response.getMessage() != null)
+                String errorMessage = (response != null)
                         ? response.getMessage()
-                        : "Errore sconosciuto di comunicazione.";
+                        : "Unknown Error.";
 
                 showError(errorTitle, errorMessage);
 
@@ -93,8 +88,8 @@ public class InitializerGUI extends Application {
 
         FilmController controller = new FilmController(filmView, filmServiceClient, user.getUserId());
 
-        Scene scene = new Scene(filmView.getView(), 1000, 600);
-        primaryStage.setTitle("Video Library of: " + user.getUsername());
+        Scene scene = new Scene(filmView.getView(), 1200, 600);
+        primaryStage.setTitle(user.getUsername()+"'s library");
         primaryStage.setScene(scene);
 
         primaryStage.setOnCloseRequest(event -> {

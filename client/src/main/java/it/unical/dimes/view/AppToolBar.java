@@ -79,17 +79,14 @@ public class AppToolBar {
 
 
         // Gestione status per evitare UNKNOWN
-        ViewingStatus[] vs = ViewingStatus.values();
-        ViewingStatus[] newVS = new ViewingStatus[vs.length - 1];
-        System.arraycopy(vs, 1, newVS, 0, vs.length - 1);
-        statusComboBox = uiFactory.createComboBox("Status", newVS);
+//        ViewingStatus[] vs = ViewingStatus.values();
+//        ViewingStatus[] newVS = new ViewingStatus[vs.length - 1];
+//        System.arraycopy(vs, 1, newVS, 0, vs.length - 1);
+
+        statusComboBox = uiFactory.createComboBox("Status", ViewingStatus.values());
         statusComboBox.setPrefWidth(100);
 
-
-        SortBy[] sb = SortBy.values();
-        SortBy[] newSortBy = new SortBy[sb.length - 1];
-        System.arraycopy(sb, 1, newSortBy, 0, sb.length - 1);
-        sortByComboBox = uiFactory.createComboBox("Sort by", newSortBy);
+        sortByComboBox = uiFactory.createComboBox("Sort by", SortBy.values());
 
         //toggle button tramite factory (testo vuoto perché usiamo l'icona)
         sortDirectionToggle = uiFactory.createToggleButton("", 40);

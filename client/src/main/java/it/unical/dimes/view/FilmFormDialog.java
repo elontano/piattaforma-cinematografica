@@ -161,7 +161,6 @@ public class FilmFormDialog {
             }
         } catch (NumberFormatException e) {
             System.err.println("Invalid year, set to 0");
-            year = 0;
         }
         film.yearOfRelease(year);
         film.rating(ratingSpinner.getValue());

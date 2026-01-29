@@ -17,9 +17,8 @@ public class UserService {
     }
 
     public User registerUser(User user){
-        //|| user.getPassword().length() < 8
-        if (user.getPassword() == null ) {
-            throw new IllegalArgumentException("La password deve essere di almeno 8 caratteri");
+        if (user.getPassword() == null || user.getPassword().length()<8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters.");
         }
 
         String hashed = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());

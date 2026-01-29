@@ -112,13 +112,10 @@ class UserGrpcControllerTest {
 
             userGrpcController.login(request,responseStreamObserver);
 
-            ArgumentCaptor<UserResponse> captor = ArgumentCaptor.forClass(UserResponse.class);
-            verify(responseStreamObserver).onNext(captor.capture());
+            ArgumentCaptor<Throwable> captor = ArgumentCaptor.forClass(Throwable.class);
+            verify(responseStreamObserver).onError(captor.capture());
 
-            UserResponse response = captor.getValue();
-
-            assertFalse(response.getSuccess());
-            assertEquals("Username or Password not valid",response.getMessage());
+            assertInstanceOf(StatusRuntimeException.class,captor.getValue());
         }
 
     }

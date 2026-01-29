@@ -38,15 +38,16 @@ public class UserGrpcController extends UserServiceGrpc.UserServiceImplBase {
             responseObserver.onCompleted();
 
         } catch (UserAlreadyExistsException e) {
-            logger.warning("Tentativo registrazione utente già esistente: " + e.getMessage());
+            logger.warning("Registration attemp for an already existing user: " +username);
             responseObserver.onError(Status.ALREADY_EXISTS
-                    .withDescription("Username già esistente")
+                    .withDescription("Username already exists")
                     .asRuntimeException());
         } catch (Exception e) {
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("Errore registrazione")
-                    .asRuntimeException());
             logger.severe("Error during registration: " + e.getMessage());
+
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Internal registration error")
+                    .asRuntimeException());
         }
     }
 
@@ -64,15 +65,8 @@ public class UserGrpcController extends UserServiceGrpc.UserServiceImplBase {
             }
 
             if(!loginSuccess){
-
-                responseObserver.onError(Status.UNAUTHENTICATED.withDescription("Credentials invalid").asRuntimeException());
-//                UserResponse response = UserResponse.newBuilder()
-//                        .setSuccess(false)
-//                        .setMessage("Username or Password not valid")
-//                        .build();
-//
-//                responseObserver.onNext(response);
-//                responseObserver.onCompleted();
+                logger.info("Failed login attempt for user: "+username);
+                responseObserver.onError(Status.UNAUTHENTICATED.withDescription("Invalid Credentials.").asRuntimeException());
                 return;
             }
 
@@ -87,10 +81,10 @@ public class UserGrpcController extends UserServiceGrpc.UserServiceImplBase {
             responseObserver.onCompleted();
 
         } catch (Exception e) {
-            responseObserver.onError(Status.INTERNAL
-                    .withDescription("Errore login")
-                    .asRuntimeException());
             logger.severe("Error during login: " + e.getMessage());
+            responseObserver.onError(Status.INTERNAL
+                    .withDescription("Internal login error")
+                    .asRuntimeException());
         }
     }
 }

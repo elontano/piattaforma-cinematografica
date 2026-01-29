@@ -50,7 +50,6 @@ public class DBManager {
     }
 
     public void initDB() {
-
         String createTableUsers = """
                     CREATE TABLE IF NOT EXISTS Users (
                         id INT AUTO_INCREMENT PRIMARY KEY,
