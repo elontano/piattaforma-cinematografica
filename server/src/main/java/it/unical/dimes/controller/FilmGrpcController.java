@@ -6,6 +6,7 @@ import it.unical.dimes.entities.Film;
 import it.unical.dimes.entities.FilmFilter;
 import it.unical.dimes.entities.SortBy;
 import it.unical.dimes.exception.CatalogException;
+import it.unical.dimes.mapper.FilmFilterMapper;
 import it.unical.dimes.mapper.FilmMapper;
 import it.unical.dimes.mapper.ViewingStatusMapper;
 import it.unical.dimes.protocol.*;
@@ -39,12 +40,13 @@ public class FilmGrpcController extends FilmServiceGrpc.FilmServiceImplBase {
             responseObserver.onCompleted();
 
         } catch (CatalogException e) {
+            logger.severe("Catalog error during create operation: " + e.getMessage());
             responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
-            logger.severe("Error during create operation: " + e.getMessage());
         } catch (Exception e) {
-            responseObserver.onError(Status.INTERNAL.withDescription("server error ")
+            logger.severe("Unexpected error during film creation: " + e.getMessage());
+
+            responseObserver.onError(Status.INTERNAL.withDescription("Internal Server Error")
                     .asRuntimeException());
-            logger.severe("Error during create operation: " + e.getMessage());
         }
     }
 
@@ -52,7 +54,7 @@ public class FilmGrpcController extends FilmServiceGrpc.FilmServiceImplBase {
     public void searchFilms(SearchFilmRequest request, StreamObserver<FilmListResponse> responseObserver) {
         int userId = request.getUserId();
         try {
-            FilmFilter filter = mapToFilter(request);
+            FilmFilter filter = FilmFilterMapper.mapToFilter(request);
             List<Film> listFilm = filmService.search(filter, userId);
 
             FilmListResponse.Builder responseBuilder = FilmListResponse.newBuilder();
@@ -67,9 +69,10 @@ public class FilmGrpcController extends FilmServiceGrpc.FilmServiceImplBase {
             responseObserver.onCompleted();
 
         } catch (Exception e) {
+            logger.severe("Error during search operation for user: " + userId);
+
             responseObserver.onError(Status.INTERNAL.withDescription("Error during search operation")
                     .asRuntimeException());
-            logger.severe("Error during search operation: " + e.getMessage());
         }
     }
 
@@ -84,19 +87,18 @@ public class FilmGrpcController extends FilmServiceGrpc.FilmServiceImplBase {
 
             OperationResponse response = OperationResponse.newBuilder()
                     .setValid(true)
-                    .setMessage(film.getTitle() + " updated")
+                    .setMessage(film.getTitle() + " successfully updated")
                     .build();
 
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
         } catch (CatalogException e) {
+            logger.severe("Catalog error during update operation: " + e.getMessage());
             responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
-            logger.severe("Error during update operation: " + e.getMessage());
         } catch (Exception e) {
-            responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
-            logger.severe("Error during update operation: " + e.getMessage());
-
+            logger.severe("Unexpected error during update operation: " + e.getMessage());
+            responseObserver.onError(Status.INTERNAL.withDescription("Internal Server Error ").asRuntimeException());
         }
     }
 
@@ -110,43 +112,18 @@ public class FilmGrpcController extends FilmServiceGrpc.FilmServiceImplBase {
 
             OperationResponse response = OperationResponse.newBuilder()
                     .setValid(true)
-                    .setMessage("film with id: " + id + " deleted")
+                    .setMessage("Film with ID: " + id + " successfully deleted")
                     .build();
 
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
         } catch (CatalogException e) {
+            logger.severe("Catalog error during delete operation: " + e.getMessage());
             responseObserver.onError(e.getGrpcStatus().withDescription(e.getMessage()).asRuntimeException());
-            logger.severe("Error during delete operation: " + e.getMessage());
         } catch (Exception e) {
-            responseObserver.onError(Status.INTERNAL.withDescription("server error ").asRuntimeException());
-            logger.severe("Error during delete operation: " + e.getMessage());
+            logger.severe("Unexpected error during delete operation: " + e.getMessage());
+            responseObserver.onError(Status.INTERNAL.withDescription("Internal Server Error ").asRuntimeException());
         }
-    }
-
-    private FilmFilter mapToFilter(SearchFilmRequest request) {
-        FilmFilter.Builder builder = new FilmFilter.Builder();
-
-        if (request.hasTitle()) {
-            builder.title(request.getTitle());
-        }
-        if (request.hasDirector()) {
-            builder.director(request.getDirector());
-        }
-        if (request.hasGenre()) {
-            builder.genre(request.getGenre());
-        }
-        if (request.hasYearOfRelease()) {
-            builder.yearOfRelease(request.getYearOfRelease());
-        }
-        if (request.getViewingStatus() != ViewingStatusDTO.UNKNOWN_STATUS) {
-            builder.viewingStatus(ViewingStatusMapper.fromGrpc(request.getViewingStatus()));
-        }
-        if (request.getSortBy() != SortByDTO.NONE) {
-            builder.sortBy(SortBy.valueOf(request.getSortBy().name()));
-            builder.sortDirection(request.getSortAscending());
-        }
-        return builder.build();
     }
 }

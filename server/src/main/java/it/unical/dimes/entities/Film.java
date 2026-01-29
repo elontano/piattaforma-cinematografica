@@ -112,15 +112,16 @@ public class Film {
 
     @Override
     public String toString() {
-        return "{id= "+id
-                +"userID ="+userId
-                +" title= '"
-                +title+"'"
-                +" director= '"
-                +director+"'"
-                +" year= '"
-                +yearOfRelease+"'";
-        //da completare
+        return "Film{" +
+                "director='" + director + '\'' +
+                ", id=" + id +
+                ", userId=" + userId +
+                ", title='" + title + '\'' +
+                ", genre='" + genre + '\'' +
+                ", yearOfRelease=" + yearOfRelease +
+                ", rating=" + rating +
+                ", viewingStatus=" + viewingStatus +
+                '}';
     }
 
     @Override
