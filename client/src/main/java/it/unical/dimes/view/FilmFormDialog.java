@@ -1,6 +1,7 @@
 package it.unical.dimes.view;
 
 import atlantafx.base.theme.Styles;
+import it.unical.dimes.command.SaveCommand;
 import it.unical.dimes.factory.UIFactory;
 import it.unical.dimes.model.Film;
 import it.unical.dimes.model.ViewingStatus;
@@ -123,6 +124,17 @@ public class FilmFormDialog {
         titleField.textProperty().addListener(((observableValue, oldValue, newValue) ->{
             saveButton.setDisable(newValue.trim().isEmpty());
         } ));
+
+        yearField.textProperty().addListener((observableValue, oldValue, newValue) ->{
+            validateInput(saveButton);
+        } );
+    }
+
+    private void validateInput(Node saveButton){
+        boolean isYearValid = validateYear();
+        boolean isTitleValid = !titleField.getText().trim().isEmpty();
+
+        saveButton.setDisable(!isYearValid || !isTitleValid );
     }
 
     private void populateFields() {
@@ -153,18 +165,30 @@ public class FilmFormDialog {
         film.director(directorField.getText()!=null?directorField.getText():"");
         film.genre(genreField.getText()!=null?genreField.getText():"");
 
-        int year = 0;
-        try {
-            String yearText = yearField.getText().trim(); // Rimuove spazi
-            if (!yearText.isEmpty()) {
-                year = Integer.parseInt(yearText);
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("Invalid year, set to 0");
-        }
+        int year = Integer.parseInt(yearField.getText().trim());
+
         film.yearOfRelease(year);
         film.rating(ratingSpinner.getValue());
         film.viewingStatus(statusComboBox.getValue());
         return film.build();
+    }
+
+    private boolean validateYear() {
+        String year = yearField.getText().trim();
+
+        if (year.isEmpty()) {
+            return true;
+        }
+        try {
+            int yearInt = Integer.parseInt(year);
+            if (yearInt < 1895) {
+                yearField.getStyleClass().add(Styles.DANGER);
+                return false;
+            } else {
+                return true;
+            }
+        }catch (NumberFormatException e){
+            return false;
+        }
     }
 }
