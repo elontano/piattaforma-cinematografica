@@ -3,7 +3,7 @@ package it.unical.dimes.controller;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import it.unical.dimes.entities.Film;
-import it.unical.dimes.exception.ValidationException;
+import it.unical.dimes.exceptions.ValidationException;
 import it.unical.dimes.protocol.*;
 import it.unical.dimes.services.FilmService;
 import org.junit.jupiter.api.DisplayName;

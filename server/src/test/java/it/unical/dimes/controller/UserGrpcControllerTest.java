@@ -4,7 +4,7 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import it.unical.dimes.entities.User;
-import it.unical.dimes.exception.UserAlreadyExistsException;
+import it.unical.dimes.exceptions.UserAlreadyExistsException;
 import it.unical.dimes.protocol.UserRequest;
 import it.unical.dimes.protocol.UserResponse;
 import it.unical.dimes.services.UserService;
@@ -117,6 +117,5 @@ class UserGrpcControllerTest {
 
             assertInstanceOf(StatusRuntimeException.class,captor.getValue());
         }
-
     }
 }

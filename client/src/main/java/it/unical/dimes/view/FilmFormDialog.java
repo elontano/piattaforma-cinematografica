@@ -165,7 +165,12 @@ public class FilmFormDialog {
         film.director(directorField.getText()!=null?directorField.getText():"");
         film.genre(genreField.getText()!=null?genreField.getText():"");
 
-        int year = Integer.parseInt(yearField.getText().trim());
+        int year;
+        if(yearField.getText().trim().isEmpty()){
+            year=0;
+        }else {
+            year = Integer.parseInt(yearField.getText().trim());
+        }
 
         film.yearOfRelease(year);
         film.rating(ratingSpinner.getValue());

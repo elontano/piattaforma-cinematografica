@@ -1,9 +1,6 @@
 package it.unical.dimes.repositories;
 
 import it.unical.dimes.entities.User;
-import it.unical.dimes.exception.CatalogException;
-import it.unical.dimes.exception.UserAlreadyExistsException;
-import jdk.jshell.spi.ExecutionControl;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

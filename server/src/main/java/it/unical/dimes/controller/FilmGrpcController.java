@@ -4,11 +4,9 @@ import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import it.unical.dimes.entities.Film;
 import it.unical.dimes.entities.FilmFilter;
-import it.unical.dimes.entities.SortBy;
-import it.unical.dimes.exception.CatalogException;
-import it.unical.dimes.mapper.FilmFilterMapper;
-import it.unical.dimes.mapper.FilmMapper;
-import it.unical.dimes.mapper.ViewingStatusMapper;
+import it.unical.dimes.exceptions.CatalogException;
+import it.unical.dimes.mappers.FilmFilterMapper;
+import it.unical.dimes.mappers.FilmMapper;
 import it.unical.dimes.protocol.*;
 import it.unical.dimes.services.FilmService;
 

@@ -1,11 +1,10 @@
-package it.unical.dimes.exception;
-
+package it.unical.dimes.exceptions;
 
 import io.grpc.Status;
 
-public class FilmNotFoundException extends CatalogException{
+public class UserNotFoundException extends CatalogException{
 
-    public FilmNotFoundException(String message){
+    public UserNotFoundException(String message){
         super(message);
     }
 
@@ -13,5 +12,4 @@ public class FilmNotFoundException extends CatalogException{
     public Status getGrpcStatus() {
         return Status.NOT_FOUND;
     }
-
 }
