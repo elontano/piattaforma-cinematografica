@@ -1,4 +1,4 @@
-package it.unical.dimes.exception;
+package it.unical.dimes.exceptions;
 
 
 import io.grpc.Status;

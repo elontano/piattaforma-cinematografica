@@ -1,4 +1,4 @@
-package it.unical.dimes.mapper;
+package it.unical.dimes.mappers;
 
 import it.unical.dimes.entities.FilmFilter;
 import it.unical.dimes.entities.SortBy;

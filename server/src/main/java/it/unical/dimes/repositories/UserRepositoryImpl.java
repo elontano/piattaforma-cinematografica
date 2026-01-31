@@ -1,7 +1,7 @@
 package it.unical.dimes.repositories;
 
 import it.unical.dimes.entities.User;
-import it.unical.dimes.exception.UserAlreadyExistsException;
+import it.unical.dimes.exceptions.UserAlreadyExistsException;
 
 import java.sql.*;
 

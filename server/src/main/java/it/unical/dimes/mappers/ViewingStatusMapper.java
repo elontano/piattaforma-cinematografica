@@ -1,4 +1,4 @@
-package it.unical.dimes.mapper;
+package it.unical.dimes.mappers;
 
 import it.unical.dimes.entities.ViewingStatus;
 import it.unical.dimes.protocol.ViewingStatusDTO;

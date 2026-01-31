@@ -2,8 +2,8 @@ package it.unical.dimes.services;
 
 import it.unical.dimes.entities.Film;
 import it.unical.dimes.entities.FilmFilter;
-import it.unical.dimes.exception.FilmNotFoundException;
-import it.unical.dimes.exception.ValidationException;
+import it.unical.dimes.exceptions.FilmNotFoundException;
+import it.unical.dimes.exceptions.ValidationException;
 import it.unical.dimes.repositories.FilmRepository;
 
 import java.time.Year;

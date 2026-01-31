@@ -3,7 +3,7 @@ package it.unical.dimes.controller;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import it.unical.dimes.entities.User;
-import it.unical.dimes.exception.UserAlreadyExistsException;
+import it.unical.dimes.exceptions.UserAlreadyExistsException;
 import it.unical.dimes.protocol.UserRequest;
 import it.unical.dimes.protocol.UserResponse;
 import it.unical.dimes.protocol.UserServiceGrpc;
