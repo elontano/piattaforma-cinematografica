@@ -1,4 +1,4 @@
-# 🎬 Piattaforma Cinematografica - Gestione Remota 🎬 
+# 🎬 Gestione Remota Piattaforma Cinematografica 🎬 
 
 ![Java](https://img.shields.io/badge/Java-17%2B-orange)
 ![gRPC](https://img.shields.io/badge/gRPC-Client%2FServer-blue)
@@ -20,16 +20,7 @@ Il progetto permette agli utenti di organizzare la propria collezione virtuale d
 * **Ordinamento**: Visualizzazione ordinata per Titolo, Anno o Valutazione.
 * **Interfaccia Grafica**: GUI intuitiva realizzata in **JavaFX**.
 
-Il sistema segue un'architettura a strati (**Layered Architecture**) per garantire modularità e manutenibilità.
-
-### 🔌 Modulo Protocol (`protocol`)
-Definisce i contratti di comunicazione tra Client e Server.
-
-### 🖥️ Modulo Server (`server`)
-Gestisce la logica di business e la persistenza dei dati.
-
-### 📱 Modulo Client (`client`)
-Interfaccia utente interattiva sviluppata in JavaFX.
+Il sistema segue un'architettura a strati (**Layered Architecture: Client, Protocol, Server**) per garantire modularità e manutenibilità.
 
 ## 🛠️ Tecnologie Utilizzate
 
@@ -40,19 +31,3 @@ Interfaccia utente interattiva sviluppata in JavaFX.
 * **Build Tool**: Maven
 * **Testing**: JUnit 5, Mockito
 
-## Guida all'Installazione
-
-### Prerequisiti
-* Java JDK 17 o superiore.
-* Maven installato.
-* MySQL Server in esecuzione.
-
-### Configurazione Database
-Crea un database vuoto chiamato `piattaforma_cinematografica`. Le tabelle verranno create automaticamente all'avvio del server.
-Assicurati che i parametri in `server/src/main/resources/config.properties` corrispondano alla tua configurazione locale:
-```properties
-server.name=127.0.0.1
-port.number=3306
-db.name=piattaforma_cinematografica
-db.user=root
-db.password=LA_TUA_PASSWORD
