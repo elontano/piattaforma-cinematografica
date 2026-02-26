@@ -9,6 +9,8 @@ Un'applicazione software distribuita per la gestione di una collezione personale
 
 Il progetto permette agli utenti di organizzare la propria collezione virtuale di film, offrendo funzionalità di catalogazione, ricerca avanzata e persistenza dei dati.
 
+Progetto realizzato per l'esame di Ing. del Software.
+
 ## Funzionalità Principali
 
 * **Autenticazione Utente**: Registrazione e Login per accedere alla propria collezione privata.
